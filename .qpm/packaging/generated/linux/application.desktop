@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=QTsignalApp
+Comment=QTsignalApp Qt application
+Exec=QTsignalApp
+Icon=com.example.qtsignalapp
+Terminal=false
+Categories=Utility;
+StartupWMClass=QTsignalApp
+X-QPM-AppId=com.example.qtsignalapp

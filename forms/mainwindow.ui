@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>1280</width><height>820</height></rect>
+  </property>
+  <property name="windowTitle"><string>QTsignalApp — Electromagnetism Field Explorer</string></property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_root">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex"><number>1</number></property>
+      <widget class="QWidget" name="Signal">
+       <attribute name="title"><string>Signal</string></attribute>
+      </widget>
+      <widget class="QWidget" name="Electrostatique">
+       <attribute name="title"><string>Electrostatique</string></attribute>
+       <layout class="QHBoxLayout" name="electrostaticLayout">
+        <item>
+         <widget class="QScrollArea" name="electrostaticControlsScroll">
+          <property name="minimumSize"><size><width>390</width><height>0</height></size></property>
+          <property name="maximumSize"><size><width>500</width><height>16777215</height></size></property>
+          <property name="horizontalScrollBarPolicy"><enum>Qt::ScrollBarAlwaysOff</enum></property>
+          <property name="widgetResizable"><bool>true</bool></property>
+          <widget class="QWidget" name="electrostaticControlsWidget">
+           <property name="geometry"><rect><x>0</x><y>0</y><width>385</width><height>930</height></rect></property>
+           <layout class="QVBoxLayout" name="controlsLayout">
+            <item>
+             <widget class="QGroupBox" name="sourcesGroup">
+              <property name="title"><string>Sources</string></property>
+              <layout class="QVBoxLayout" name="sourcesLayout">
+               <item><widget class="QComboBox" name="sourceCombo"/></item>
+               <item>
+                <layout class="QHBoxLayout" name="sourceNavigationLayout">
+                 <item><widget class="QPushButton" name="previousSourceButton"><property name="text"><string>◀ Previous</string></property></widget></item>
+                 <item><widget class="QPushButton" name="nextSourceButton"><property name="text"><string>Next ▶</string></property></widget></item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="addSourcesLayout">
+                 <item><widget class="QComboBox" name="newSourceTypeCombo"><property name="toolTip"><string>Choose an electrostatic source model to add at the current measurement-point position.</string></property></widget></item>
+                 <item><widget class="QPushButton" name="addSourceButton"><property name="text"><string>+ Add</string></property></widget></item>
+                 <item><widget class="QPushButton" name="removeSourceButton"><property name="text"><string>Remove</string></property></widget></item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="sourceEditorGroup">
+              <property name="title"><string>Selected source</string></property>
+              <layout class="QFormLayout" name="sourceEditorLayout">
+               <item row="0" column="0"><widget class="QLabel" name="nameLabel"><property name="text"><string>Name</string></property></widget></item>
+               <item row="0" column="1"><widget class="QLineEdit" name="sourceNameEdit"/></item>
+               <item row="1" column="0"><widget class="QLabel" name="typeLabel"><property name="text"><string>Type</string></property></widget></item>
+               <item row="1" column="1"><widget class="QComboBox" name="sourceTypeCombo"/></item>
+               <item row="2" column="0"><widget class="QLabel" name="strengthLabel"><property name="text"><string>Q (nC)</string></property></widget></item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="strengthLayout">
+                 <item><widget class="QDoubleSpinBox" name="sourceStrengthSpin"><property name="decimals"><number>6</number></property><property name="minimum"><double>-1000000000.000000000000000</double></property><property name="maximum"><double>1000000000.000000000000000</double></property></widget></item>
+                 <item><widget class="QComboBox" name="strengthUnitCombo"><property name="maximumSize"><size><width>65</width><height>16777215</height></size></property></widget></item>
+                </layout>
+               </item>
+               <item row="3" column="0"><widget class="QLabel" name="xLabel"><property name="text"><string>X (m)</string></property></widget></item>
+               <item row="3" column="1"><widget class="QDoubleSpinBox" name="sourceXSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>-10000.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property></widget></item>
+               <item row="4" column="0"><widget class="QLabel" name="yLabel"><property name="text"><string>Y (m)</string></property></widget></item>
+               <item row="4" column="1"><widget class="QDoubleSpinBox" name="sourceYSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>-10000.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property></widget></item>
+               <item row="5" column="0"><widget class="QLabel" name="zLabel"><property name="text"><string>Z (m)</string></property></widget></item>
+               <item row="5" column="1"><widget class="QDoubleSpinBox" name="sourceZSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>-10000.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property></widget></item>
+               <item row="6" column="0"><widget class="QLabel" name="radiusLabel"><property name="text"><string>Outer radius (m)</string></property></widget></item>
+               <item row="6" column="1"><widget class="QDoubleSpinBox" name="sourceRadiusSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>0.000001000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property><property name="value"><double>0.350000000000000</double></property></widget></item>
+               <item row="7" column="0"><widget class="QLabel" name="innerRadiusLabel"><property name="text"><string>Inner radius (m)</string></property></widget></item>
+               <item row="7" column="1"><widget class="QDoubleSpinBox" name="sourceInnerRadiusSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>0.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property><property name="value"><double>0.120000000000000</double></property></widget></item>
+               <item row="8" column="0"><widget class="QLabel" name="lengthLabel"><property name="text"><string>Length (m)</string></property></widget></item>
+               <item row="8" column="1"><widget class="QDoubleSpinBox" name="sourceLengthSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>0.000001000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property><property name="value"><double>1.500000000000000</double></property></widget></item>
+               <item row="9" column="0"><widget class="QLabel" name="widthLabel"><property name="text"><string>Width (m)</string></property></widget></item>
+               <item row="9" column="1"><widget class="QDoubleSpinBox" name="sourceWidthSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>0.000001000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property><property name="value"><double>1.500000000000000</double></property></widget></item>
+               <item row="10" column="0"><widget class="QLabel" name="heightLabel"><property name="text"><string>Height (m)</string></property></widget></item>
+               <item row="10" column="1"><widget class="QDoubleSpinBox" name="sourceHeightSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>0.000001000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property><property name="value"><double>0.800000000000000</double></property></widget></item>
+               <item row="11" column="0"><widget class="QLabel" name="thicknessLabel"><property name="text"><string>Thickness (m)</string></property></widget></item>
+               <item row="11" column="1"><widget class="QDoubleSpinBox" name="sourceThicknessSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>0.000001000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property><property name="value"><double>0.100000000000000</double></property></widget></item>
+               <item row="12" column="0"><widget class="QLabel" name="angleLabel"><property name="text"><string>Angle XY (°)</string></property></widget></item>
+               <item row="12" column="1"><widget class="QDoubleSpinBox" name="sourceAngleSpin"><property name="decimals"><number>2</number></property><property name="minimum"><double>-360.000000000000000</double></property><property name="maximum"><double>360.000000000000000</double></property></widget></item>
+               <item row="13" column="0" colspan="2"><widget class="QPushButton" name="applySourceButton"><property name="text"><string>Apply source parameters</string></property></widget></item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="measurementGroup">
+              <property name="title"><string>Measurement point M</string></property>
+              <layout class="QFormLayout" name="measurementLayout">
+               <item row="0" column="0"><widget class="QLabel" name="measureXLabel"><property name="text"><string>X (m)</string></property></widget></item>
+               <item row="0" column="1"><widget class="QDoubleSpinBox" name="measureXSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>-10000.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property></widget></item>
+               <item row="1" column="0"><widget class="QLabel" name="measureYLabel"><property name="text"><string>Y (m)</string></property></widget></item>
+               <item row="1" column="1"><widget class="QDoubleSpinBox" name="measureYSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>-10000.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property></widget></item>
+               <item row="2" column="0"><widget class="QLabel" name="measureZLabel"><property name="text"><string>Z (m)</string></property></widget></item>
+               <item row="2" column="1"><widget class="QDoubleSpinBox" name="measureZSpin"><property name="decimals"><number>5</number></property><property name="minimum"><double>-10000.000000000000000</double></property><property name="maximum"><double>10000.000000000000000</double></property></widget></item>
+               <item row="3" column="0"><widget class="QLabel" name="testChargeLabel"><property name="text"><string>Test charge</string></property></widget></item>
+               <item row="3" column="1">
+                <layout class="QHBoxLayout" name="testChargeLayout">
+                 <item><widget class="QDoubleSpinBox" name="testChargeSpin"><property name="decimals"><number>6</number></property><property name="minimum"><double>-1000000000.000000000000000</double></property><property name="maximum"><double>1000000000.000000000000000</double></property><property name="value"><double>1.000000000000000</double></property></widget></item>
+                 <item><widget class="QComboBox" name="testChargeUnitCombo"><property name="maximumSize"><size><width>70</width><height>16777215</height></size></property></widget></item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="resultsGroup">
+              <property name="title"><string>Field / force at M</string></property>
+              <layout class="QFormLayout" name="resultsLayout">
+               <item row="0" column="0"><widget class="QLabel" name="eMagTitle"><property name="text"><string>|E|</string></property></widget></item>
+               <item row="0" column="1"><widget class="QLabel" name="eMagnitudeLabel"><property name="text"><string>0 V/m</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="1" column="0"><widget class="QLabel" name="exTitle"><property name="text"><string>Ex</string></property></widget></item>
+               <item row="1" column="1"><widget class="QLabel" name="exLabel"><property name="text"><string>0 V/m</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="2" column="0"><widget class="QLabel" name="eyTitle"><property name="text"><string>Ey</string></property></widget></item>
+               <item row="2" column="1"><widget class="QLabel" name="eyLabel"><property name="text"><string>0 V/m</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="3" column="0"><widget class="QLabel" name="ezTitle"><property name="text"><string>Ez</string></property></widget></item>
+               <item row="3" column="1"><widget class="QLabel" name="ezLabel"><property name="text"><string>0 V/m</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="4" column="0"><widget class="QLabel" name="potentialTitle"><property name="text"><string>V(M)</string></property></widget></item>
+               <item row="4" column="1"><widget class="QLabel" name="potentialLabel"><property name="text"><string>0 V</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="5" column="0"><widget class="QLabel" name="fMagTitle"><property name="text"><string>|F|</string></property></widget></item>
+               <item row="5" column="1"><widget class="QLabel" name="forceMagnitudeLabel"><property name="text"><string>0 N</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="6" column="0"><widget class="QLabel" name="fxTitle"><property name="text"><string>Fx</string></property></widget></item>
+               <item row="6" column="1"><widget class="QLabel" name="fxLabel"><property name="text"><string>0 N</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="7" column="0"><widget class="QLabel" name="fyTitle"><property name="text"><string>Fy</string></property></widget></item>
+               <item row="7" column="1"><widget class="QLabel" name="fyLabel"><property name="text"><string>0 N</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="8" column="0"><widget class="QLabel" name="fzTitle"><property name="text"><string>Fz</string></property></widget></item>
+               <item row="8" column="1"><widget class="QLabel" name="fzLabel"><property name="text"><string>0 N</string></property><property name="textInteractionFlags"><set>Qt::TextSelectableByMouse</set></property></widget></item>
+               <item row="9" column="0" colspan="2"><widget class="QLabel" name="measurementNoteLabel"><property name="wordWrap"><bool>true</bool></property><property name="styleSheet"><string notr="true">color: #7a4b00;</string></property><property name="text"><string/></property></widget></item>
+              </layout>
+             </widget>
+            </item>
+            <item><spacer name="controlsSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer></item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="canvasColumnLayout">
+          <item>
+           <layout class="QHBoxLayout" name="canvasToolbarLayout">
+            <item><widget class="QCheckBox" name="showFieldVectorsCheck"><property name="text"><string>Show field vectors</string></property><property name="checked"><bool>true</bool></property></widget></item>
+            <item><widget class="QLabel" name="electroPlaneLabel"><property name="text"><string>View plane:</string></property></widget></item>
+            <item><widget class="QComboBox" name="electroPlaneCombo">
+             <item><property name="text"><string>XY</string></property></item>
+             <item><property name="text"><string>XZ</string></property></item>
+             <item><property name="text"><string>YZ</string></property></item>
+            </widget></item>
+            <item><spacer name="canvasToolbarSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+            <item><widget class="QPushButton" name="centerViewButton"><property name="text"><string>Center / reset zoom</string></property></widget></item>
+           </layout>
+          </item>
+          <item><widget class="ElectrostaticCanvas" name="electrostaticCanvas"/></item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElectrostaticCanvas</class>
+   <extends>QWidget</extends>
+   <header>widgets/electrostatic_canvas.h</header>
+   <container>0</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

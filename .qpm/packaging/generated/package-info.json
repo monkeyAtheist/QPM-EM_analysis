@@ -1,0 +1,116 @@
+{
+  "generatedBy": "Qt Project Manager",
+  "schemaVersion": 17,
+  "project": "QTsignalApp",
+  "target": "QTsignalApp",
+  "productName": "QTsignalApp",
+  "version": "6.2.0",
+  "platform": "desktop",
+  "architecture": "x64",
+  "configuration": "debug",
+  "packageName": "QTsignalApp-6.2.0-desktop-x64",
+  "metadata": {
+    "enabled": true,
+    "productName": "QTsignalApp",
+    "productVersion": "6.2.0",
+    "companyName": "",
+    "description": "Interactive electrostatic, magnetostatic and RF/EM field explorer with antenna geometry design, link-budget calculations, configurable UI themes, 2D TMz/TEz FDTD with CPML/modal guide ports, Smith/network analysis, BEM capacitance, thin-wire MoM antennas, geometric coil coupling, probes and passive-component calculations, engineering wave/antenna/EM calculator",
+    "copyright": "",
+    "identifier": "com.example.qtsignalapp",
+    "icon": "",
+    "licenseFile": "",
+    "readmeFile": "",
+    "outputDirectory": "dist",
+    "packageNamePattern": "${productName}-${version}-${platform}-${arch}",
+    "archiveFormat": "zip",
+    "cleanOutput": true,
+    "buildBeforePackaging": true,
+    "includeQtRuntime": true,
+    "includeTranslations": true,
+    "includeDebugSymbols": false,
+    "extraFiles": [],
+    "windows": {
+      "embedVersionResource": true,
+      "fileDescription": "QTsignalApp Qt application",
+      "internalName": "QTsignalApp",
+      "originalFilename": "QTsignalApp.exe",
+      "executionLevel": "asInvoker",
+      "dpiAwareness": "per-monitor-v2",
+      "manifestFile": "",
+      "resourceCompilerPath": ""
+    },
+    "linux": {
+      "generateDesktopEntry": true,
+      "appId": "com.example.qtsignalapp",
+      "categories": [
+        "Utility"
+      ],
+      "comment": "QTsignalApp Qt application",
+      "installPrefix": "/usr/local"
+    },
+    "installer": {
+      "enabled": true,
+      "backend": "qt-ifw",
+      "buildPortablePackage": true,
+      "outputDirectory": "dist/installers",
+      "fileNamePattern": "${productName}-${version}-${arch}-setup",
+      "installDirectoryName": "QTsignalApp",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterInstall": false,
+      "qtIfw": {
+        "mode": "offline",
+        "binaryCreatorPath": "",
+        "repogenPath": "",
+        "installerBasePath": "",
+        "componentId": "com.example.qtsignalapp",
+        "componentDisplayName": "QTsignalApp",
+        "componentDescription": "QTsignalApp application files",
+        "releaseDate": "",
+        "repositoryUrl": "",
+        "repositoryOutputDirectory": "dist/repository",
+        "maintenanceToolName": "QTsignalAppMaintenanceTool",
+        "wizardStyle": "Modern",
+        "controlScript": "",
+        "componentScript": "",
+        "archiveFormat": "7z",
+        "compression": 5,
+        "additionalArguments": []
+      },
+      "inno": {
+        "isccPath": "",
+        "scriptFile": "",
+        "languages": [
+          "english"
+        ],
+        "privilegesRequired": "admin",
+        "architecture": "x64",
+        "compression": "lzma2/max",
+        "solidCompression": true,
+        "additionalDirectives": []
+      },
+      "nsis": {
+        "makensisPath": "",
+        "scriptFile": "",
+        "requestExecutionLevel": "admin",
+        "compressor": "lzma",
+        "additionalDefines": []
+      },
+      "signing": {
+        "enabled": false,
+        "signToolPath": "",
+        "certificateFile": "",
+        "certificateThumbprint": "",
+        "certificateSubject": "",
+        "certificatePasswordEnvironment": "QPM_SIGN_CERT_PASSWORD",
+        "timestampUrl": "http://timestamp.digicert.com",
+        "fileDigest": "sha256",
+        "timestampDigest": "sha256",
+        "signTargetBinary": true,
+        "signInstaller": true,
+        "verifyAfterSigning": true,
+        "additionalArguments": []
+      }
+    }
+  }
+}
