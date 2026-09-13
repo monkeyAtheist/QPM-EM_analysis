@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 19,
+  "schemaVersion": 18,
   "name": "QTsignalApp",
   "kind": "widgets-application",
   "targetName": "QTsignalApp",
@@ -20,7 +20,7 @@
     "autoMoc": true,
     "autoUic": true,
     "autoRcc": true,
-    "autoDeploy": true
+    "autoDeploy": false
   },
   "build": {
     "system": "direct",
@@ -127,9 +127,9 @@
       {
         "id": "default-run",
         "name": "Desktop Run",
-        "buildProfileId": "release",
+        "buildProfileId": "debug",
         "arguments": "",
-        "workingDirectory": "c:\\Users\\jerry\\OneDrive\\Bureau\\code\\Programmes C++ windows\\QT\\SignalAnalysis\\QTsignalApp",
+        "workingDirectory": "",
         "environment": {}
       }
     ],
@@ -138,7 +138,7 @@
         "id": "desktop-deploy",
         "name": "Desktop Deploy",
         "buildProfileId": "release",
-        "enabled": true,
+        "enabled": false,
         "translations": false,
         "outputDirectory": "dist",
         "cleanOutput": true,
@@ -299,7 +299,7 @@
       "deployProfileId": "desktop-deploy",
       "debugProfileId": "local-debug",
       "platformProfileId": "desktop-platform",
-      "buildMode": "release64"
+      "buildMode": "debug64"
     }
   },
   "testing": {
@@ -479,11 +479,6 @@
       "staticLink": false,
       "additionalArguments": []
     }
-  },
-  "branding": {
-    "executableIcon": "icons/QTsignalApp_Yagi_Icon.ico",
-    "windowIcon": "icons/iconApp.png",
-    "autoApplyWindowIcon": true
   },
   "packaging": {
     "enabled": true,

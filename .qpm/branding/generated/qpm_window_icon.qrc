@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/qpm/branding">
+    <file alias="window-icon.png">qpm_window_icon.png</file>
+  </qresource>
+</RCC>

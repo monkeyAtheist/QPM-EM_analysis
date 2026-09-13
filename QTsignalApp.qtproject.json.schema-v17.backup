@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 19,
+  "schemaVersion": 17,
   "name": "QTsignalApp",
   "kind": "widgets-application",
   "targetName": "QTsignalApp",
@@ -20,7 +20,7 @@
     "autoMoc": true,
     "autoUic": true,
     "autoRcc": true,
-    "autoDeploy": true
+    "autoDeploy": false
   },
   "build": {
     "system": "direct",
@@ -86,8 +86,7 @@
         "generateProjectFiles": true,
         "precompiledHeader": "",
         "unityBuild": false,
-        "useResponseFiles": true,
-        "linkage": "dynamic"
+        "useResponseFiles": true
       },
       {
         "id": "release",
@@ -119,17 +118,16 @@
         "generateProjectFiles": true,
         "precompiledHeader": "",
         "unityBuild": false,
-        "useResponseFiles": true,
-        "linkage": "dynamic"
+        "useResponseFiles": true
       }
     ],
     "runs": [
       {
         "id": "default-run",
         "name": "Desktop Run",
-        "buildProfileId": "release",
+        "buildProfileId": "debug",
         "arguments": "",
-        "workingDirectory": "c:\\Users\\jerry\\OneDrive\\Bureau\\code\\Programmes C++ windows\\QT\\SignalAnalysis\\QTsignalApp",
+        "workingDirectory": "",
         "environment": {}
       }
     ],
@@ -138,12 +136,8 @@
         "id": "desktop-deploy",
         "name": "Desktop Deploy",
         "buildProfileId": "release",
-        "enabled": true,
-        "translations": false,
-        "outputDirectory": "dist",
-        "cleanOutput": true,
-        "compilerRuntime": true,
-        "verifyStandalone": true
+        "enabled": false,
+        "translations": false
       }
     ],
     "debugs": [
@@ -299,7 +293,7 @@
       "deployProfileId": "desktop-deploy",
       "debugProfileId": "local-debug",
       "platformProfileId": "desktop-platform",
-      "buildMode": "release64"
+      "buildMode": "debug64"
     }
   },
   "testing": {
@@ -479,11 +473,6 @@
       "staticLink": false,
       "additionalArguments": []
     }
-  },
-  "branding": {
-    "executableIcon": "icons/QTsignalApp_Yagi_Icon.ico",
-    "windowIcon": "icons/iconApp.png",
-    "autoApplyWindowIcon": true
   },
   "packaging": {
     "enabled": true,
@@ -779,5 +768,6 @@
   ],
   "libraryDirectories": [],
   "libraries": [],
-  "defines": []
+  "defines": [],
+  "version": "6.2.0"
 }

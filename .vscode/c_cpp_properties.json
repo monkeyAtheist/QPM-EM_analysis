@@ -18,10 +18,18 @@
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/forms",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/resources",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/core",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/dsp",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/generator",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/instrumentation",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/io",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/widgets",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/core",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/dsp",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/generator",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/instrumentation",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/io",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/widgets",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/forms",
@@ -38,7 +46,7 @@
         "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtGui",
         "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtCore",
         "C:/Qt/Qt6.11.0/6.11.0/mingw_64/mkspecs/win32-g++",
-        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/debug/generated"
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/release/generated"
       ],
       "browse": {
         "path": [
@@ -51,10 +59,18 @@
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/forms",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/resources",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/core",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/dsp",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/generator",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/instrumentation",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/io",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/src/widgets",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/core",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/dsp",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/generator",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/instrumentation",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/io",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/include/widgets",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTacquisitionApp/QtAcquisitionApp/forms",
@@ -71,7 +87,7 @@
           "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtGui",
           "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtCore",
           "C:/Qt/Qt6.11.0/6.11.0/mingw_64/mkspecs/win32-g++",
-          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/debug/generated"
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/release/generated"
         ],
         "limitSymbolsToIncludedHeaders": true
       },
