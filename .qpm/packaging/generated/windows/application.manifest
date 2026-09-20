@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity version="6.2.0.0" processorArchitecture="*" name="com.example.qtsignalapp" type="win32"/>
+  <assemblyIdentity version="6.3.0.0" processorArchitecture="*" name="com.example.qtsignalapp" type="win32"/>
   <description>Interactive electrostatic, magnetostatic and RF/EM field explorer with antenna geometry design, link-budget calculations, configurable UI themes, 2D TMz/TEz FDTD with CPML/modal guide ports, Smith/network analysis, BEM capacitance, thin-wire MoM antennas, geometric coil coupling, probes and passive-component calculations, engineering wave/antenna/EM calculator</description>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"/></requestedPrivileges></security>

@@ -1,6 +1,7 @@
 #include "widgets/em_calculator_widget.h"
 
 #include "em_calculator_model.h"
+#include "widgets/laplace_rail_widget.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -96,6 +97,8 @@ const FormulaTemplate kFormulaTemplates[] = {
     {"Potential of a point charge", "ke*(1e-9)/0.1", "Example: q=1 nC at r=0.1 m. Result is V in volts relative to infinity."},
     {"Parallel-plate capacitance", "eps0*4.2*(0.01*0.01)/1e-3", "Example: epsilon_r=4.2, A=1 cm x 1 cm, d=1 mm. Result is C in F; fringe fields neglected."},
     {"B field around a long straight wire", "mu0*1/(2*pi*0.01)", "Example: I=1 A at r=1 cm. Result is B in tesla."},
+    {"Laplace force on straight conductor", "0.5*2*0.1*sind(90)", "Example: B=0.5 T, I=2 A, active length L=0.1 m, theta=90 deg. Result is F=B I L sin(theta) in N."},
+    {"Motional EMF on moving rod", "0.5*0.1*3*sind(90)", "Example: B=0.5 T, L=0.1 m, v=3 m/s, theta=90 deg. Result is e=B L v sin(theta) in V."},
     {"B field inside an ideal solenoid", "mu0*500*1/0.1", "Example: N=500 turns, I=1 A, length=0.1 m. Result is B in tesla for an air core."},
     {"Free-space wave impedance", "sqrt(mu0/eps0)", "Returns eta0 in ohms."},
     {"Wave impedance in dielectric", "sqrt(mu0/(eps0*4.2))", "Example: lossless non-magnetic epsilon_r=4.2. Result is ohms."},
@@ -114,7 +117,7 @@ EmCalculatorWidget::EmCalculatorWidget(QWidget *parent) : QWidget(parent)
     root->setContentsMargins(8, 8, 8, 8);
 
     auto *intro = new QLabel(QStringLiteral(
-        "Calculator / Notes — wave/frequency conversion, antenna starting dimensions, an SI scientific calculator with EM constants, and a persistent plain-text notebook. "
+        "Calculator / Notes — wave/frequency conversion, antenna starting dimensions, an SI scientific calculator with EM constants, an interactive Laplace-rail trainer, and a persistent plain-text notebook. "
         "Closed-form antenna dimensions are starting estimates; use Antenna designer + convergence/validation for final geometry."), this);
     intro->setWordWrap(true);
     root->addWidget(intro);
@@ -124,20 +127,24 @@ EmCalculatorWidget::EmCalculatorWidget(QWidget *parent) : QWidget(parent)
     auto *wavePage = new QWidget(tabs);
     auto *antennaPage = new QWidget(tabs);
     auto *sciencePage = new QWidget(tabs);
+    auto *laplacePage = new QWidget(tabs);
     auto *notesPage = new QWidget(tabs);
     tabs->addTab(wavePage, QStringLiteral("Wave / frequency"));
     tabs->addTab(antennaPage, QStringLiteral("Antenna sizing"));
     tabs->addTab(sciencePage, QStringLiteral("EM scientific calculator"));
+    tabs->addTab(laplacePage, QStringLiteral("Laplace rail"));
     tabs->addTab(notesPage, QStringLiteral("Notes"));
     tabs->setTabToolTip(0, QStringLiteral("Bidirectional f <-> lambda conversion, including period, omega and wave number."));
     tabs->setTabToolTip(1, QStringLiteral("Starting dimensions for common antennas, plus inverse frequency estimates when the geometry has a meaningful resonant length."));
     tabs->setTabToolTip(2, QStringLiteral("Expression calculator using SI units with electromagnetic and physical constants."));
-    tabs->setTabToolTip(3, QStringLiteral("Persistent plain-text notes with standard edit, copy/paste and text-file import/export."));
+    tabs->setTabToolTip(3, QStringLiteral("Interactive Laplace-rail calculator: force, motion, motional EMF, voltage drive and generator braking."));
+    tabs->setTabToolTip(4, QStringLiteral("Persistent plain-text notes with standard edit, copy/paste and text-file import/export."));
     root->addWidget(tabs, 1);
 
     buildWaveTab(wavePage);
     buildAntennaTab(antennaPage);
     buildScientificTab(sciencePage);
+    buildLaplaceRailTab(laplacePage);
     buildNotesTab(notesPage);
 }
 
@@ -421,6 +428,13 @@ void EmCalculatorWidget::buildScientificTab(QWidget *page)
 
     loadFormulaTemplate(2);
     evaluateScientificExpression();
+}
+
+void EmCalculatorWidget::buildLaplaceRailTab(QWidget *page)
+{
+    auto *layout = new QVBoxLayout(page);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(new LaplaceRailWidget(page), 1);
 }
 
 void EmCalculatorWidget::buildNotesTab(QWidget *page)

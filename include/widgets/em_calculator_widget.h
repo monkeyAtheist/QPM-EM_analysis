@@ -29,6 +29,7 @@ private:
     void buildWaveTab(QWidget *page);
     void buildAntennaTab(QWidget *page);
     void buildScientificTab(QWidget *page);
+    void buildLaplaceRailTab(QWidget *page);
     void buildNotesTab(QWidget *page);
 
     void calculateWaveFromFrequency();

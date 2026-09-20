@@ -1,5 +1,14 @@
 # QTsignalApp application changelog
 
+## 6.3.0 — Laplace rail trainer and antenna reference fixtures
+
+- Adds `Calculator / Notes -> Laplace rail`, an interactive educational rail/rod model with constant-current, voltage/back-EMF and generator/braking regimes.
+- Adds time-domain plots for position, velocity, current, force, motional EMF and acceleration with hover/click readback and synchronized rod sketch.
+- Adds a time slider, copyable result summary, power readback and generated practice exercises.
+- Adds Laplace-force and motional-EMF templates to the general EM scientific calculator.
+- Ships two exploratory RFMTA010504NNRB002 PCB fixtures (edge and centered) using generic FR4/ground assumptions; they are explicitly not manufacturer reference boards.
+- Keeps `.qta v19` and the validated Simulation / Antenna Designer 1.0 solver kernels unchanged.
+
 ## 6.2.0 — Calculator / Notes and Calculator → Designer workflow
 
 - Renames the top-level `Calculator` workspace to `Calculator / Notes`.

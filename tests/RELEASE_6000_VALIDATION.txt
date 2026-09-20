@@ -1,0 +1,50 @@
+QTsignalApp 6.0.0 — Simulation / Antenna Designer 1.0
+Final production-only release validation
+Date: 2026-09-06
+Compiler contract: C++17, -Wall -Wextra -Wpedantic -Werror, O2 production-gate objects
+
+Half-wave dipole
+  verdict=PASS
+  valid=1
+  Zin=(82.5537,24.9893) ohm
+  meshDeltaPercent=0.967574
+  normalizedPatternRmsPercent=0.416321
+
+Electrically small circular loop
+  verdict=PASS
+  valid=1
+  Zin=(0.0231221,231.018) ohm
+  meshDeltaPercent=0.429473
+  normalizedPatternRmsPercent=8.34983
+
+Quarter-wave monopole + finite PEC ground
+  verdict=PASS
+  valid=1
+  Zin=(62.1802,40.8726) ohm
+  meshDeltaPercent=8.63084
+  coarseFinePatternRmsPercent=0.452688
+
+Rectangular patch engineering benchmark
+  verdict=PASS
+  valid=1
+  Zin=(9.00491,-43.1675) ohm
+  meshDeltaPercent=4.35318
+  primaryMetric=fJ2peak/f0
+  primaryMetricValue=1.08045
+  primaryMetricErrorPercent=8.04511
+
+Homogeneous eps_r -> 1 via
+  PASS
+  Pprop/Pfree=0.999997
+  Zin=(0.106112,-5046.04) ohm
+  P(2V)/P(1V)=4
+
+Fast RF/passivity/NaN smoke
+  PASS
+  Zin=(1.24235e-05,-1475.93) ohm
+  Gamma=(0.997707,-0.0676764)
+  ReturnLoss=4.94803e-09 dB
+  VSWR=3.51085e+09
+  AcceptedPower=2.85158e-12 W
+
+Release decision: PASS — Gates A–E closed for the frozen Simulation / Antenna Designer 1.0 scope.

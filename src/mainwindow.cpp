@@ -396,7 +396,7 @@ void MainWindow::initializeMagnetostaticAndReferenceWorkspaces()
     auto *calculator = new EmCalculatorWidget(ui->tabWidget);
     m_calculatorWorkspace = calculator;
     const int calculatorTab = ui->tabWidget->addTab(calculator, QStringLiteral("Calculator / Notes"));
-    ui->tabWidget->setTabToolTip(calculatorTab, QStringLiteral("Wave/frequency conversion, antenna starting dimensions, EM scientific calculator and persistent plain-text notes."));
+    ui->tabWidget->setTabToolTip(calculatorTab, QStringLiteral("Wave/frequency conversion, antenna starting dimensions, EM scientific calculator, interactive Laplace-rail trainer and persistent plain-text notes."));
 
     auto *reference = new ElectromagnetismReferenceWidget(ui->tabWidget);
     m_referenceWorkspace = reference;

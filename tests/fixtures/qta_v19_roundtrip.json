@@ -1,0 +1,104 @@
+{
+  "format": "QTsignalApp antenna geometry",
+  "version": 19,
+  "units": "m",
+  "designFrequencyHz": 300000000.0,
+  "wires": [
+    {
+      "id": "wire-1",
+      "name": "W1",
+      "x1": -0.25,
+      "y1": 0.0,
+      "z1": 0.0,
+      "x2": 0.25,
+      "y2": 0.0,
+      "z2": 0.0,
+      "radiusM": 0.001
+    }
+  ],
+  "surfaces": [
+    {
+      "id": "surface-1",
+      "name": "GROUND",
+      "surfaceType": 0,
+      "cx": 0.0,
+      "cy": 0.0,
+      "cz": -0.05,
+      "orientation": 0,
+      "yawDeg": 0.0,
+      "pitchDeg": 0.0,
+      "rollDeg": 0.0,
+      "radiusM": 0.25,
+      "innerRadiusM": 0.0,
+      "widthM": 1.0,
+      "heightM": 1.0,
+      "focalLengthM": 0.25,
+      "feedWidthM": 0.003,
+      "feedLengthM": 0.02,
+      "insetDepthM": 0.0,
+      "notchGapM": 0.0005,
+      "meshHintM": 0.05
+    }
+  ],
+  "dielectrics": [
+    {
+      "id": "dielectric-1",
+      "name": "SUB",
+      "cx": 0.0,
+      "cy": 0.0,
+      "cz": -0.025,
+      "orientation": 0,
+      "yawDeg": 0.0,
+      "pitchDeg": 0.0,
+      "rollDeg": 0.0,
+      "widthM": 0.20,
+      "heightM": 0.20,
+      "thicknessM": 0.0016,
+      "relativePermittivity": 4.2,
+      "lossTangent": 0.02,
+      "fieldFillFactor": 0.65
+    }
+  ],
+  "feeds": [
+    {
+      "id": "feed-1",
+      "name": "F1",
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0,
+      "voltageV": 1.0,
+      "phaseDeg": 0.0,
+      "referenceOhm": 50.0,
+      "sourceOhm": 50.0
+    }
+  ],
+  "constraints": [
+    {
+      "id": "constraint-1",
+      "name": "Lock W1",
+      "type": 13,
+      "aKind": 0,
+      "aId": "wire-1",
+      "aAnchor": 0,
+      "bKind": 0,
+      "bId": "wire-1",
+      "bAnchor": 0,
+      "valueM": 0.0,
+      "valueDeg": 0.0,
+      "enabled": true,
+      "solveMode": 0,
+      "fixedMask": 7,
+      "fixedX": -0.25,
+      "fixedY": 0.0,
+      "fixedZ": 0.0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1",
+      "name": "Assembly",
+      "members": ["wire-1", "surface-1"]
+    }
+  ],
+  "individualDirectorVariables": []
+}

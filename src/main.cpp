@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     QApplication::setOrganizationName(QStringLiteral("QTsignalApp"));
     QApplication::setApplicationName(QStringLiteral("QTsignalApp"));
-    QApplication::setApplicationVersion(QStringLiteral("6.2.0"));
+    QApplication::setApplicationVersion(QStringLiteral("6.3.0"));
 
     QFile::remove(startupLogPath());
     startupTrace(QStringLiteral("QApplication constructed"));

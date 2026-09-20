@@ -129,8 +129,9 @@
         "name": "Desktop Run",
         "buildProfileId": "release",
         "arguments": "",
-        "workingDirectory": "c:\\Users\\jerry\\OneDrive\\Bureau\\code\\Programmes C++ windows\\QT\\SignalAnalysis\\QTsignalApp",
-        "environment": {}
+        "workingDirectory": "/c/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp",
+        "environment": {},
+        "outputMode": "detached"
       }
     ],
     "deploys": [
@@ -488,7 +489,7 @@
   "packaging": {
     "enabled": true,
     "productName": "QTsignalApp",
-    "productVersion": "6.2.0",
+    "productVersion": "6.3.0",
     "companyName": "",
     "description": "Interactive electrostatic, magnetostatic and RF/EM field explorer with antenna geometry design, link-budget calculations, configurable UI themes, 2D TMz/TEz FDTD with CPML/modal guide ports, Smith/network analysis, BEM capacitance, thin-wire MoM antennas, geometric coil coupling, probes and passive-component calculations, engineering wave/antenna/EM calculator",
     "copyright": "",
@@ -704,7 +705,9 @@
       "src/hybrid_wire_surface_mom.cpp",
       "src/microstrip_models.cpp",
       "src/em_calculator_model.cpp",
-      "src/em_calculator_widget.cpp"
+      "src/laplace_rail_model.cpp",
+      "src/em_calculator_widget.cpp",
+      "src/laplace_rail_widget.cpp"
     ],
     "headers": [
       "include/dialog_electro_stat.h",
@@ -741,7 +744,9 @@
       "include/hybrid_wire_surface_mom.h",
       "include/microstrip_models.h",
       "include/em_calculator_model.h",
-      "include/widgets/em_calculator_widget.h"
+      "include/laplace_rail_model.h",
+      "include/widgets/em_calculator_widget.h",
+      "include/widgets/laplace_rail_widget.h"
     ],
     "forms": [
       "forms/dialog_electro_stat.ui",

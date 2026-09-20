@@ -1,0 +1,8 @@
+{
+  "format": "QTsignalApp antenna geometry",
+  "version": 19,
+  "units": "m",
+  "wires": [
+    {"id": "bad-wire", "x1": 0.0, "y1": 0.0, "z1": 0.0, "x2": 0.0, "y2": 0.0, "z2": 0.0, "radiusM": 0.001}
+  ]
+}

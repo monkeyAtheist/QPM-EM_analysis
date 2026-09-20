@@ -1,0 +1,13 @@
+{
+  "format": "QTsignalApp antenna geometry",
+  "designFrequencyHz": 144000000.0,
+  "wires": [
+    {"name": "LegacyWire", "x1": -0.5, "y1": 0.0, "x2": 0.5, "y2": 0.0, "radiusM": 0.001}
+  ],
+  "planes": [
+    {"name": "LegacyPlane", "surfaceType": 0, "cx": 0.0, "cy": 0.0, "widthM": 1.0, "heightM": 1.0, "radiusM": 0.25, "innerRadiusM": 0.0}
+  ],
+  "feeds": [
+    {"name": "LegacyFeed", "x": 0.0, "y": 0.0, "voltageV": 1.0, "phaseDeg": 0.0, "sourceOhm": 50.0}
+  ]
+}
