@@ -1,4 +1,115 @@
+## 6.14.0 — Electrostatic charge / density dual editor (12/11/2026)
+- Two-way Q/ρ, Q/σ, Q/λ (finite sources), and λ/ρ (infinite cylinders); per-source geometry normalization and precise SI backing.
+- Geometry changes retain the last edited quantity, while the other quantity updates immediately; explicit note for infinite sources without finite total Q.
+- Portable C++ and target Qt Test regressions; no physical solver or .qta changes.
+
+## 6.13.1 — Drawing workspace UX (11/11/2026)
+- Notes: compact toolbar and inline notebook scope, help on demand; more space for the drawing canvas.
+- Advanced zoom and schematic-symbol controls collapse by default and appear when needed.
+- Expanded drawing preserves the advanced-panel state; notebook and EM model formats unchanged.
+
+## 6.13.0 — Smart schematic connectors, multiselection and spherical-charge reference (11/11/2026)
+- Smart orthogonal drawn wires anchored to persistent component terminal IDs, retained on move/rotation/scale and undo/redo.
+- Multi-object marquee/Shift-click selection, group move as one undo step and Select all.
+- Ink schema v6 + migration v1-v5 with v5 backup; original .qta v19 preserved.
+- Electrostatic solid sphere UI now explicitly distinguishes Q total (C) from rho (C/m^3) and displays derived density; numerical kernels unchanged.
+- Analytic Gauss-law reference and Qt Test coverage of electrostatics/schematic interaction.
+
+## 6.12.0 — Technical note-taking: electronic circuit symbols (11/11/2026)
+
+- Add a palette of 27 editable vector schematic symbols: passive R/C/L, transformer, BJT (NPN/PNP), MOSFET (N/P), JFET (N/P), op-amp, DC/AC voltage and current sources, diodes, fuse, ground, switch and other annotations.
+- Place symbols by clicking the drawing page; select and move with mouse or Surface Pen; rotate by 90 degrees, resize 65–200%, rename reference and delete; snap-to-grid optional. Symbols remain drawings, with no electrical connectivity/netlist or SPICE behavior.
+- Add interactive selected-image resize handle: default aspect-ratio preservation, Shift for free aspect, with Undo/Redo. Images remain embedded.
+- Upgrade the independent notebook sidecar schema v4 to v5; support v1–v4 migration and create `.v4.bak` before first autosave. Keep `.qta v19` unchanged.
+- Add Qt Test coverage and portable source/integrity verification. Full Windows/Qt/QPM compilation is a target-machine validation gate.
+- No changes to the frozen EM solver kernels.
+
+## 6.11.0 — Notes zoom/pan and embedded images (11/11/2026)
+
+- Pan and zoom (1x–6x), fit-to-page, Ctrl+wheel, middle mouse, Hand tool, two-finger touch, preserving paper coordinates.
+- Insert PNG/JPEG/WebP/BMP or paste a screenshot from clipboard, embed PNG in notebook v4.
+- Select/move/erase/undo/redo for image objects; output PNG/copy includes images; bounded image import.
+- Legacy v1/v2/v3 migration with backup on first save, `.qta v19` unchanged, frozen EM solvers untouched.
+- Qt Test ink_61100 provided; Windows GUI/QPM validation pending.
+
+## 6.10.0 — Notes: technical drawing and object repositioning (11/11/2026)
+
+- Add vector Line, Arrow, Rectangle and Ellipse tools. Hold Shift during drawing to constrain Rectangle to a square and Ellipse to a circle.
+- Add Select / move: click an existing text annotation, vector shape or handwritten stroke and drag to reposition it; mouse and Surface Pen are supported.
+- Each insertion, erasure and move participates in per-page Undo / Redo. The eraser and Clear page now also operate on vector shapes.
+- Upgrade the drawing sidecar to JSON schema v3 (independent from `.qta v19`); read v1 and v2, retain pre-upgrade `.v1.bak` / `.v2.bak`, write atomically and keep pages vector-editable.
+- Add Qt Test tests for shape serialization, valid/invalid migration, object movement, per-page state and Shift-constrained circles.
+- No changes to validated EM kernels or project schema. GUI/QPM build and Surface Pen behavior require confirmation on Windows Qt 6.11.
+
+## 6.9.0 — Notes: multipage typed drawing (11/11/2026)
+
+- Add positioned multiline text annotations to the stylus canvas with editing, clipboard paste and per-page undo/redo.
+- Multiple drawing pages with navigation, creation, deletion confirmation and dedicated page contents.
+- Maximized drawing editor, reusing the live canvas and controls so no edits are lost during expansion.
+- Backward compatible v1→v2 ink sidecar migration with `.v1.bak` backup and atomic save; `.qta v19` unchanged.
+- Add Qt Test and 6.9 regression scripts. Solvers unchanged.
+
+## 6.8.0 — Field-line visualization / stylus notes
+
+- Electrostatic field-line drawing hardened with adaptive RK4 projected trajectories, polarity-aware seeding, source boundary termination, and numerical loop guards. The validated electrostatic field model is unchanged; visual behavior may differ, notably near point charges.
+- Notes now include a pressure-aware Windows tablet/mouse drawing page alongside existing typed notes. Features: colors, widths, eraser by stroke, undo/redo, grid, PNG export and image clipboard.
+- Drawing strokes are autosaved atomically as JSON, separately per Global notebook or per saved `.qta` project (`.notes.ink.json`). Invalid JSON is rejected without overwriting the current drawing.
+- Added field-line regression and Qt Test drawing checks. QPM/Windows/Surface Pen manual integration remains pending.
+- App version 6.8.0; `.qta` schema v19 unchanged; six EM kernels hash-identical.
+
 # QTsignalApp application changelog
+
+## 6.7.0 — Technical debt isolation, persistence module and diagnostics
+
+- Extracts the .qta v19 project-validation/migration contract from the oversized Antenna Designer UI into a QtCore-only module; rejects out-of-range schema numbers before narrowing.
+- Isolates the unreferenced legacy ElectroMagnetisme and matrice compilation units from the active QPM build while preserving the source for audit (not certified or repaired).
+- Adds rotating persistent application logging in a writable user directory, Help actions to open/copy its location and a temporary-directory fallback when unavailable.
+- Adds optional QtCore/Qt Widgets QTest suites for .qta documents, logging and Calculator/Notes smoke interactions, with a Windows/QPM checklist.
+- Excludes a stale machine-specific compile_commands.json from the source distribution. No changes to six validated EM solver kernels or .qta v19 schema.
+- Static/numeric regression is executed; Qt 6.11/Windows full build and QTest GUI runs remain target-machine gates.
+
+## 6.6.0 — Calculator / Notes ergonomic improvements
+
+- Prioritizes Scientific, Variables, Constants and engineering workflows; groups the input palette into collapsible math, constants and unit sections. Adds Ctrl+L expression focus.
+- Introduces persisted precision and optional engineering SI prefixes for supported units, while preserving exact numerical values in the engine.
+- Distinguishes copying the precise SI value, the displayed value with its unit, and the validated expression; invalidates actions after dependent input edits.
+- Adds explicit global versus per-antenna-project notebooks and variable worksheets, using portable atomically saved sidecars next to the loaded/saved .qta, with per-project import backups.
+- Adds a dimension/assumption preview dialog before replacing Designer geometry; Cancel remains the default.
+- Keeps the six frozen EM solver kernels bit-for-bit identical and retains project schema .qta v19.
+- Numerical regression passes; Qt 6.11 GUI build and functional tests still require the Windows QPM target.
+
+## 6.5.1 — Reliability fixes after 6.5 technical audit
+
+- Corrects dimensioned-unit literal precedence: `9 m²` now evaluates to `9 m²`; `(9 m)^2` still evaluates to `81 m²`. Supports `2*cm`, `3 cm^2` and denominator unit powers.
+- Reserves SI unit symbols for their physical meanings in worksheets. `F` (farad) cannot be a force variable; use `force`. The exact bundled 6.5.0 sample is migrated on loading without rewriting custom worksheets.
+- Prevents transfer to the Antenna Designer from an invalid or modified calculation. Only a successful current calculation enables Create/Copy; the transfer uses its validated result snapshot, including the inverse frequency.
+- Prevents copying stale wave/antenna results after inputs change. Results are marked as requiring recalculation.
+- Protects Notes import with confirmation for nonempty content, a persistent QSettings backup before overwrite, and a Restore backup action.
+- Adds numerical regression cases for squared/cubed units, reserved names, inverse-solve failure and regression checks for older formula templates.
+- Retains `.qta v19` and byte-identical validated EM solver kernels. The Qt/Windows UI requires target-machine compilation and interaction checks.
+
+
+## 6.5.0 — Engineering calculator: variables, units and dimensional consistency
+
+- Adds `Calculator / Notes → Variables & units`: multiline named-variable worksheet with top-to-bottom evaluation, explicit SI unit literals (e.g. `q = 2 nC`, `r = 10 cm`, `E = ke*q/r^2`), per-variable result table with SI value and inferred unit, line-specific errors and export/copy to Notes.
+- Units are represented by SI base dimensions (kg, m, s, A, K, mol, cd). Addition and subtraction require compatible dimensions; multiplication, division, powers, roots and supported scientific functions propagate/check units. Mathematical/physical constants retain the 6.4 CODATA 2022 values.
+- Adds unit-bearing expressions and worksheet variables to the general EM calculator, while retaining `ans`, 30-row history, copy/paste, constants search and formula shortcuts. Unitless numeric literals remain dimensionless; an explicit `2 nC` is required to track charge dimensions.
+- Refreshes EM formula templates to use physically dimensioned input literals so results display meaningful units, rather than only numeric values.
+- Stores worksheet text locally via QSettings and flushes on close. Edits invalidate previously calculated worksheet variables until re-evaluation; invalid calculation runs are not committed as variables.
+- Adds `em_units_calculator_model.h/.cpp`, non-Qt numerical regression tests and a 6.5 release verifier; validated EM solvers and `.qta v19` remain unchanged.
+- GUI Windows/Qt build still requires validation using QPM/Qt on the target system.
+
+
+## 6.4.0 — Scientific calculator ergonomics and CODATA 2022 physical constants
+
+- Reorganized the main scientific calculator with a clear formula selector, editable expression, grouped function/constant shortcuts, result field, SI copy, and bounded (30-entry) reusable history.
+- Added `ans` to chain calculations; undefined `ans` and invalid expressions report explicit errors. Added a direct action to send a calculation to persistent Notes.
+- Added a standalone searchable **Physical constants** sub-tab with category filters, units, descriptions, aliases, double-click insertion, and Copy Symbol / Copy SI Value actions.
+- Centralized the expression parser and UI on one constants registry and added Boltzmann, Avogadro, Faraday, molar gas, electronvolt, gravitational and related constants. `k` remains Coulomb; `kb` means Boltzmann.
+- Updated measured vacuum epsilon0 and mu0 to NIST CODATA 2022 values, deriving ke and eta0 consistently. Material copper conductivity is explicitly marked as approximate rather than universal.
+- Made wave and antenna action buttons wrap in grids and made frequency/wavelength/length copy buttons output unambiguous SI units (Hz/m). Added scrolling for scientific UI on compact displays.
+- Added new educational EM equation templates for an isolated sphere, field-energy densities, vacuum permittivity and average Poynting flux.
+- No change to .qta project schema (v19) or validated electromagnetic kernels. Full Windows/Qt GUI build must be verified under QPM.
 
 ## 6.3.0 — Laplace rail trainer and antenna reference fixtures
 

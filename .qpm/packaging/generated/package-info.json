@@ -1,18 +1,18 @@
 {
   "generatedBy": "Qt Project Manager",
-  "schemaVersion": 17,
+  "schemaVersion": 20,
   "project": "QTsignalApp",
   "target": "QTsignalApp",
   "productName": "QTsignalApp",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "platform": "desktop",
   "architecture": "x64",
   "configuration": "debug",
-  "packageName": "QTsignalApp-6.2.0-desktop-x64",
+  "packageName": "QTsignalApp-6.3.0-desktop-x64",
   "metadata": {
     "enabled": true,
     "productName": "QTsignalApp",
-    "productVersion": "6.2.0",
+    "productVersion": "6.3.0",
     "companyName": "",
     "description": "Interactive electrostatic, magnetostatic and RF/EM field explorer with antenna geometry design, link-budget calculations, configurable UI themes, 2D TMz/TEz FDTD with CPML/modal guide ports, Smith/network analysis, BEM capacitance, thin-wire MoM antennas, geometric coil coupling, probes and passive-component calculations, engineering wave/antenna/EM calculator",
     "copyright": "",
@@ -112,5 +112,10 @@
         "additionalArguments": []
       }
     }
+  },
+  "branding": {
+    "executableIcon": "icons/QTsignalApp_Yagi_Icon.ico",
+    "windowIcon": "icons/iconApp.png",
+    "autoApplyWindowIcon": true
   }
 }

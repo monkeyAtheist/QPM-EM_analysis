@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "app_diagnostics.h"
 #include "ui_mainwindow.h"
 
 #include "widgets/electrostatic_canvas.h"
@@ -15,6 +16,8 @@
 #include <QCheckBox>
 #include <QActionGroup>
 #include <QApplication>
+#include <QDesktopServices>
+#include <QUrl>
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
@@ -49,6 +52,75 @@ SourceType indexToType(int index)
 {
     index = std::clamp(index, 0, static_cast<int>(SourceType::RectangularVolume));
     return static_cast<SourceType>(index);
+}
+
+ElectrostaticChargeDensity::Shape chargeShape(SourceType type)
+{
+    using Shape = ElectrostaticChargeDensity::Shape;
+    switch (type)
+    {
+    case SourceType::SolidSphere: return Shape::SolidSphere;
+    case SourceType::SphericalShell: return Shape::SphericalSurface;
+    case SourceType::ThickSphericalShell: return Shape::ThickSphericalShell;
+    case SourceType::InfiniteCylinderZ: return Shape::InfiniteSolidCylinder;
+    case SourceType::InfiniteHollowCylinderZ: return Shape::InfiniteHollowCylinder;
+    case SourceType::FiniteLine: return Shape::FiniteLine;
+    case SourceType::RectangularPlate: return Shape::RectangularSurface;
+    case SourceType::RectangularVolume: return Shape::RectangularVolume;
+    case SourceType::CircularPlate: return Shape::CircularSurface;
+    case SourceType::AnnularPlate: return Shape::AnnularSurface;
+    case SourceType::TriangularPlate: return Shape::TriangularSurface;
+    case SourceType::PointCharge:
+    case SourceType::InfiniteLine:
+    case SourceType::InfinitePlane:
+        return Shape::None;
+    }
+    return Shape::None;
+}
+
+// Select a readable display prefix without changing the retained SI value.
+// Signals are blocked: the displayed conversion must never become another edit.
+void displayChargeSI(QDoubleSpinBox *spin, QComboBox *unit, double si)
+{
+    if (!spin || !unit || !std::isfinite(si)) return;
+    const auto scaleAt = [](const QString &prefix) {
+        if (prefix == QLatin1String("p")) return 1e-12;
+        if (prefix == QLatin1String("n")) return 1e-9;
+        if (prefix == QLatin1String("u")) return 1e-6;
+        if (prefix == QLatin1String("m")) return 1e-3;
+        if (prefix == QLatin1String("k")) return 1e3;
+        return 1.0;
+    };
+    const auto usable = [spin, si](double factor) {
+        const double shown = si / factor;
+        return std::isfinite(shown) &&
+               std::abs(shown) <= spin->maximum() &&
+               (si == 0.0 || std::abs(shown) >= 1e-10);
+    };
+    int choice = unit->currentIndex();
+    if (!usable(scaleAt(unit->itemText(choice))))
+    {
+        choice = -1;
+        for (int i = 0; i < unit->count(); ++i)
+        {
+            if (usable(scaleAt(unit->itemText(i)))) { choice = i; break; }
+        }
+    }
+    // Values outside the supported precision are kept in the model and
+    // exposed by the tooltip, rather than committed from a clipped spin box.
+    const QSignalBlocker bs(spin);
+    const QSignalBlocker bu(unit);
+    if (choice >= 0)
+    {
+        unit->setCurrentIndex(choice);
+        spin->setValue(si / scaleAt(unit->itemText(choice)));
+    }
+    else
+    {
+        spin->setValue(0.0);
+    }
+    spin->setToolTip(QStringLiteral("Stored SI value: %1 (unit prefix is display only)")
+                      .arg(si, 0, 'g', 16));
 }
 }
 
@@ -109,8 +181,35 @@ void MainWindow::initializeElectrostaticWorkspace()
     for (const SourceType type : electroTypes)
         ui->newSourceTypeCombo->addItem(ElectrostaticModel::typeName(type), static_cast<int>(type));
 
-    ui->strengthUnitCombo->addItems({QStringLiteral("n"), QStringLiteral("u"), QStringLiteral("m"), QStringLiteral("")});
+    ui->strengthUnitCombo->addItems({QStringLiteral("p"), QStringLiteral("n"), QStringLiteral("u"),
+                                      QStringLiteral("m"), QStringLiteral(""), QStringLiteral("k")});
+    ui->strengthUnitCombo->setCurrentText(QStringLiteral("n"));
+    ui->sourceStrengthSpin->setRange(-1.0e15, 1.0e15);
+    ui->sourceStrengthSpin->setDecimals(9);
     ui->testChargeUnitCombo->addItems({QStringLiteral("nC"), QStringLiteral("uC"), QStringLiteral("mC"), QStringLiteral("C")});
+
+    // Both native strength and intrinsic charge density are editable.
+    // The second row is hidden for point charges and ideal infinite line/plane
+    // sources, for which a two-way conversion has no physical meaning.
+    m_densityLabel = new QLabel(QStringLiteral("Density"), ui->sourceEditorGroup);
+    m_densitySpin = new QDoubleSpinBox(ui->sourceEditorGroup);
+    m_densitySpin->setObjectName(QStringLiteral("sourceDensitySpin"));
+    m_densitySpin->setRange(-1.0e15, 1.0e15);
+    m_densitySpin->setDecimals(9);
+    m_densityUnitCombo = new QComboBox(ui->sourceEditorGroup);
+    m_densityUnitCombo->setObjectName(QStringLiteral("densityUnitCombo"));
+    m_densityUnitCombo->addItems({QStringLiteral("p"), QStringLiteral("n"), QStringLiteral("u"),
+                                  QStringLiteral("m"), QStringLiteral(""), QStringLiteral("k")});
+    m_densityUnitCombo->setCurrentText(QStringLiteral("n"));
+    m_densityUnitCombo->setMaximumWidth(65);
+    auto *densityRow = new QHBoxLayout();
+    densityRow->addWidget(m_densitySpin, 1);
+    densityRow->addWidget(m_densityUnitCombo);
+    ui->sourceEditorLayout->insertRow(3, m_densityLabel, densityRow);
+    m_chargeEditingHint = new QLabel(ui->sourceEditorGroup);
+    m_chargeEditingHint->setObjectName(QStringLiteral("chargeBasisHint"));
+    m_chargeEditingHint->setWordWrap(true);
+    ui->sourceEditorLayout->insertRow(4, m_chargeEditingHint);
 
     connect(ui->addSourceButton, &QPushButton::clicked, this, [this] {
         const int raw = ui->newSourceTypeCombo->currentData().toInt();
@@ -122,6 +221,7 @@ void MainWindow::initializeElectrostaticWorkspace()
             return;
         const int old = m_selectedSource;
         m_electrostaticModel->removeSource(old);
+        m_densityIsDriving = false;
         refreshSourceList(std::min(old, m_electrostaticModel->sourceCount() - 1));
     });
 
@@ -129,6 +229,7 @@ void MainWindow::initializeElectrostaticWorkspace()
         if (m_loadingEditor)
             return;
         m_selectedSource = index;
+        m_densityIsDriving = false;
         ui->electrostaticCanvas->setSelectedSource(index);
         if (m_electrostatic3D) m_electrostatic3D->setSelectedSource(index);
         loadSourceEditor(index);
@@ -149,17 +250,38 @@ void MainWindow::initializeElectrostaticWorkspace()
     });
 
     connect(ui->applySourceButton, &QPushButton::clicked, this, &MainWindow::applySourceEditor);
+    connect(ui->sourceXSpin , &QDoubleSpinBox::valueChanged, this, &MainWindow::applySourceEditor);
+    connect(ui->sourceYSpin , &QDoubleSpinBox::valueChanged, this, &MainWindow::applySourceEditor);
+    connect(ui->sourceZSpin , &QDoubleSpinBox::valueChanged, this, &MainWindow::applySourceEditor);
+    connect(ui->sourceStrengthSpin, qOverload<double>(&QDoubleSpinBox::valueChanged),
+            this, [this](double) { updateChargeFromPrimary(); });
+    connect(m_densitySpin, qOverload<double>(&QDoubleSpinBox::valueChanged),
+            this, [this](double) { updateChargeFromDensity(); });
+    connect(ui->sourceStrengthSpin, &QDoubleSpinBox::editingFinished,
+            this, &MainWindow::applySourceEditor);
+    connect(m_densitySpin, &QDoubleSpinBox::editingFinished,
+            this, &MainWindow::applySourceEditor);
+
+    for (QDoubleSpinBox *geom : {ui->sourceRadiusSpin, ui->sourceInnerRadiusSpin,
+                                ui->sourceLengthSpin, ui->sourceWidthSpin,
+                                ui->sourceHeightSpin, ui->sourceThicknessSpin})
+    {
+        connect(geom, qOverload<double>(&QDoubleSpinBox::valueChanged),
+                this, [this](double) { updateChargeAfterGeometryChange(); });
+        connect(geom, &QDoubleSpinBox::editingFinished, this, &MainWindow::applySourceEditor);
+    }
+
     connect(ui->sourceTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
-        if (!m_loadingEditor)
-        {
-            updateSourceEditorVisibility();
-            updateStrengthUnitLabels();
-        }
+        if (m_loadingEditor) return;
+        m_densityIsDriving = false; // reinterpret the existing Q/lambda as native strength
+        updateSourceEditorVisibility();
+        updateChargeAfterGeometryChange();
     });
     connect(ui->strengthUnitCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
-        updateStrengthUnitLabels();
-        if (m_selectedSource >= 0)
-            loadSourceEditor(m_selectedSource);
+        if (!m_loadingEditor) { refreshChargeReadouts(); updateStrengthUnitLabels(); }
+    });
+    connect(m_densityUnitCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
+        if (!m_loadingEditor) { refreshChargeReadouts(); updateStrengthUnitLabels(); }
     });
 
     connect(ui->electrostaticCanvas, &ElectrostaticCanvas::selectedSourceChanged, this, [this](int index) {
@@ -227,7 +349,7 @@ void MainWindow::initializeElectrostaticWorkspace()
     contoursCheck->setToolTip(QStringLiteral("For Potential V these contours are equipotential lines; for |E| they are iso-magnitude lines."));
     contoursCheck->setEnabled(false);
     auto *fieldLinesCheck = new QCheckBox(QStringLiteral("Field lines"), ui->Electrostatique);
-    fieldLinesCheck->setToolTip(QStringLiteral("Integrate projected electric-field trajectories in the active plane slice."));
+    fieldLinesCheck->setToolTip(QStringLiteral("Trace 2D-projected electric-field lines in the active plane. Stops near charges; the projection is not a full 3D streamline."));
     visualizationToolbar->addWidget(scalarLabel);
     visualizationToolbar->addWidget(scalarCombo);
     visualizationToolbar->addSpacing(12);
@@ -261,10 +383,10 @@ void MainWindow::initializeElectrostaticWorkspace()
     };
     m_electrostatic3D->sourceCreateRequested = [this](int typeIndex, const ElectrostaticVec3 &position) {
         const SourceType type=indexToType(typeIndex);ElectrostaticSource source;source.type=type;source.position=position;source.name=QStringLiteral("%1 %2").arg(ElectrostaticModel::typeName(type)).arg(m_electrostaticModel->sourceCount()+1);source.strength=1.0e-9;source.radius=0.35;source.innerRadius=0.15;source.length=1.5;source.width=1.5;source.height=0.8;source.thickness=0.1;
-        const int index=m_electrostaticModel->addSource(source);refreshSourceList(index);updateMeasurementResults();
+        const int index=m_electrostaticModel->addSource(source);m_densityIsDriving=false;refreshSourceList(index);updateMeasurementResults();
     };
     m_electrostatic3D->sourceDeleteRequested = [this](int index) {
-        if(index<0||index>=m_electrostaticModel->sourceCount())return;m_electrostaticModel->removeSource(index);refreshSourceList(std::min(index,m_electrostaticModel->sourceCount()-1));updateMeasurementResults();
+        if(index<0||index>=m_electrostaticModel->sourceCount())return;m_electrostaticModel->removeSource(index);m_densityIsDriving=false;refreshSourceList(std::min(index,m_electrostaticModel->sourceCount()-1));updateMeasurementResults();
     };
     m_electroViewTabs = new QTabWidget(ui->Electrostatique);
     m_electroViewTabs->setDocumentMode(true);
@@ -407,11 +529,17 @@ void MainWindow::initializeMagnetostaticAndReferenceWorkspaces()
     // and still lets the RF-chain workspace consume its impedance/sweep signals.
     auto *antennaDesigner = new AntennaDesignerWidget(ui->tabWidget);
     m_antennaDesignerWorkspace = antennaDesigner;
+    connect(antennaDesigner, &AntennaDesignerWidget::antennaProjectFileChanged,
+            calculator, &EmCalculatorWidget::setActiveAntennaProjectFile);
     const int antennaDesignerTab = ui->tabWidget->addTab(antennaDesigner, QStringLiteral("Antenna designer"));
     ui->tabWidget->setTabToolTip(antennaDesignerTab, QStringLiteral("3D antenna CAD, geometry, presets, full-wave educational solvers and results."));
-    calculator->setCreateAntennaHandler([this, antennaDesigner](EmCalculator::AntennaKind kind, const EmCalculator::AntennaInputs &inputs, QString &error) {
+    calculator->setCreateAntennaHandler([this, antennaDesigner, calculator](EmCalculator::AntennaKind kind, const EmCalculator::AntennaInputs &inputs, QString &error) {
         const bool ok = antennaDesigner->createFromCalculator(kind, inputs, &error);
-        if (ok) ui->tabWidget->setCurrentWidget(antennaDesigner);
+        if (ok)
+        {
+            calculator->setActiveAntennaProjectFile(QString()); // new, unsaved geometry
+            ui->tabWidget->setCurrentWidget(antennaDesigner);
+        }
         return ok;
     });
 
@@ -587,6 +715,21 @@ void MainWindow::initializeMenuBar()
         if (m_referenceWorkspace) ui->tabWidget->setCurrentWidget(m_referenceWorkspace);
     });
     helpMenu->addSeparator();
+    auto *logsAction = helpMenu->addAction(QStringLiteral("Open diagnostics folder"));
+    logsAction->setObjectName(QStringLiteral("appOpenDiagnostics"));
+    connect(logsAction, &QAction::triggered, this, [this] {
+        const QString folder = AppDiagnostics::logDirectory();
+        if (folder.isEmpty() || !QDesktopServices::openUrl(QUrl::fromLocalFile(folder)))
+            QMessageBox::information(this, QStringLiteral("Diagnostics"),
+                                     QStringLiteral("Diagnostics folder: %1").arg(folder.isEmpty()
+                                         ? QStringLiteral("unavailable (check stderr)") : folder));
+    });
+    auto *logPathAction = helpMenu->addAction(QStringLiteral("Show diagnostics log path"));
+    connect(logPathAction, &QAction::triggered, this, [this] {
+        QMessageBox::information(this, QStringLiteral("Diagnostics"),
+                                 QStringLiteral("Current session log:\n%1").arg(AppDiagnostics::logFilePath()));
+    });
+    helpMenu->addSeparator();
     auto *aboutAction = helpMenu->addAction(QStringLiteral("About QTsignalApp"));
     connect(aboutAction, &QAction::triggered, this, [this] {
         QMessageBox::about(this, QStringLiteral("About QTsignalApp"),
@@ -613,6 +756,7 @@ void MainWindow::addSource(ElectrostaticSource::Type type)
     source.thickness = 0.1;
 
     const int index = m_electrostaticModel->addSource(source);
+    m_densityIsDriving = false;
     refreshSourceList(index);
 }
 
@@ -636,6 +780,8 @@ void MainWindow::refreshSourceList(int selectIndex)
 
     ui->sourceCombo->setCurrentIndex(selectIndex);
     m_loadingEditor = false;
+    if (m_selectedSource != selectIndex)
+        m_densityIsDriving = false;
     m_selectedSource = selectIndex;
     ui->electrostaticCanvas->setSelectedSource(selectIndex);
     if (m_electrostatic3D) m_electrostatic3D->setSelectedSource(selectIndex);
@@ -660,9 +806,7 @@ void MainWindow::loadSourceEditor(int index)
 
     ui->sourceNameEdit->setText(source->name);
     ui->sourceTypeCombo->setCurrentIndex(typeToIndex(source->type));
-    updateStrengthUnitLabels();
-    const double scale = chargeUnitScale(ui->strengthUnitCombo);
-    ui->sourceStrengthSpin->setValue(source->strength / scale);
+    m_chargePrimarySI = source->strength;
     ui->sourceXSpin->setValue(source->position.x);
     ui->sourceYSpin->setValue(source->position.y);
     ui->sourceZSpin->setValue(source->position.z);
@@ -674,12 +818,16 @@ void MainWindow::loadSourceEditor(int index)
     ui->sourceThicknessSpin->setValue(source->thickness);
     ui->sourceAngleSpin->setValue(source->angleDeg);
     updateSourceEditorVisibility();
+    const auto relation = currentChargeRelation();
+    m_chargeDensitySI = relation.densityFromPrimary(m_chargePrimarySI);
+    refreshChargeReadouts();
+    updateStrengthUnitLabels();
     m_loadingEditor = false;
 }
 
 void MainWindow::applySourceEditor()
 {
-    if (m_selectedSource < 0)
+    if (m_loadingEditor || m_selectedSource < 0)
         return;
 
     const auto *current = m_electrostaticModel->source(m_selectedSource);
@@ -691,7 +839,8 @@ void MainWindow::applySourceEditor()
     if (source.name.isEmpty())
         source.name = QStringLiteral("Source %1").arg(m_selectedSource + 1);
     source.type = indexToType(ui->sourceTypeCombo->currentIndex());
-    source.strength = ui->sourceStrengthSpin->value() * chargeUnitScale(ui->strengthUnitCombo);
+    // Retain the full SI value, not the rounded display representation.
+    source.strength = m_chargePrimarySI;
     source.position = {ui->sourceXSpin->value(), ui->sourceYSpin->value(), ui->sourceZSpin->value()};
     source.radius = std::max(1.0e-6, ui->sourceRadiusSpin->value());
     source.innerRadius = std::clamp(ui->sourceInnerRadiusSpin->value(), 0.0, source.radius * (1.0 - 1e-9));
@@ -703,6 +852,69 @@ void MainWindow::applySourceEditor()
 
     m_electrostaticModel->updateSource(m_selectedSource, source);
     refreshSourceList(m_selectedSource);
+}
+
+ElectrostaticChargeDensity::Relation MainWindow::currentChargeRelation() const
+{
+    using namespace ElectrostaticChargeDensity;
+    Dimensions d;
+    d.radius = std::max(1.0e-6, ui->sourceRadiusSpin->value());
+    d.innerRadius = std::clamp(ui->sourceInnerRadiusSpin->value(), 0.0,
+                               d.radius * (1.0 - 1e-9));
+    d.length = std::max(1.0e-6, ui->sourceLengthSpin->value());
+    d.width = std::max(1.0e-6, ui->sourceWidthSpin->value());
+    d.height = std::max(1.0e-6, ui->sourceHeightSpin->value());
+    d.thickness = std::max(1.0e-6, ui->sourceThicknessSpin->value());
+    return relation(chargeShape(indexToType(ui->sourceTypeCombo->currentIndex())), d);
+}
+
+void MainWindow::refreshChargeReadouts()
+{
+    // Primary is always the solver's native strength. Density is derived only
+    // for geometries where the normalization measure is physically defined.
+    displayChargeSI(ui->sourceStrengthSpin, ui->strengthUnitCombo, m_chargePrimarySI);
+    if (currentChargeRelation().valid())
+        displayChargeSI(m_densitySpin, m_densityUnitCombo, m_chargeDensitySI);
+}
+
+void MainWindow::updateChargeFromPrimary()
+{
+    if (m_loadingEditor) return;
+    m_densityIsDriving = false;
+    m_chargePrimarySI = ui->sourceStrengthSpin->value() * chargeUnitScale(ui->strengthUnitCombo);
+    const auto rel = currentChargeRelation();
+    m_chargeDensitySI = rel.densityFromPrimary(m_chargePrimarySI);
+    if (rel.valid()) displayChargeSI(m_densitySpin, m_densityUnitCombo, m_chargeDensitySI);
+    updateStrengthUnitLabels();
+}
+
+void MainWindow::updateChargeFromDensity()
+{
+    if (m_loadingEditor) return;
+    const auto rel = currentChargeRelation();
+    if (!rel.valid()) return;
+    m_densityIsDriving = true;
+    m_chargeDensitySI = m_densitySpin->value() * chargeUnitScale(m_densityUnitCombo);
+    m_chargePrimarySI = rel.primaryFromDensity(m_chargeDensitySI);
+    displayChargeSI(ui->sourceStrengthSpin, ui->strengthUnitCombo, m_chargePrimarySI);
+    updateStrengthUnitLabels();
+}
+
+void MainWindow::updateChargeAfterGeometryChange()
+{
+    if (m_loadingEditor) return;
+    const auto rel = currentChargeRelation();
+    if (rel.valid())
+    {
+        if (m_densityIsDriving)
+            m_chargePrimarySI = rel.primaryFromDensity(m_chargeDensitySI);
+        else
+            m_chargeDensitySI = rel.densityFromPrimary(m_chargePrimarySI);
+    }
+    else
+        m_chargeDensitySI = NAN;
+    refreshChargeReadouts();
+    updateStrengthUnitLabels();
 }
 
 void MainWindow::updateSourceEditorVisibility()
@@ -742,9 +954,43 @@ void MainWindow::updateStrengthUnitLabels()
     const SourceType type = indexToType(ui->sourceTypeCombo->currentIndex());
     const QString prefix = ui->strengthUnitCombo->currentText();
     const QString base = ElectrostaticModel::strengthUnit(type);
-    ui->strengthLabel->setText(QStringLiteral("%1 (%2%3)")
-                                   .arg(ElectrostaticModel::strengthSymbol(type), prefix, base));
+    const auto relation = currentChargeRelation();
+    const QString quantity = relation.valid() && relation.primaryIsTotalCharge
+        ? QStringLiteral("Q total") : ElectrostaticModel::strengthSymbol(type);
+    ui->strengthLabel->setText(QStringLiteral("%1 (%2%3)").arg(quantity, prefix, base));
 
+    if (m_densityLabel && m_densitySpin && m_densityUnitCombo && m_chargeEditingHint)
+    {
+        const bool valid = relation.valid();
+        m_densityLabel->setVisible(valid);
+        m_densitySpin->setVisible(valid);
+        m_densityUnitCombo->setVisible(valid);
+        m_chargeEditingHint->setVisible(valid);
+        if (valid)
+        {
+            const bool volume = relation.densityKind == ElectrostaticChargeDensity::Kind::Volume;
+            const bool surface = relation.densityKind == ElectrostaticChargeDensity::Kind::Surface;
+            const QString symbol = volume ? QStringLiteral("ρ") : surface ? QStringLiteral("σ") : QStringLiteral("λ");
+            const QString unit = volume ? QStringLiteral("C/m³") : surface ? QStringLiteral("C/m²") : QStringLiteral("C/m");
+            m_densityLabel->setText(QStringLiteral("%1 (%2%3)")
+                                     .arg(symbol, m_densityUnitCombo->currentText(), unit));
+            const QString geom = volume ? QStringLiteral("V") : surface ? QStringLiteral("A") : QStringLiteral("L");
+            const QString geomUnit = volume
+                ? (relation.primaryIsTotalCharge ? QStringLiteral("m³") : QStringLiteral("m²"))
+                : surface ? QStringLiteral("m²") : QStringLiteral("m");
+            const QString native = relation.primaryIsTotalCharge ? QStringLiteral("Q") : QStringLiteral("λ");
+            const QString denominator = relation.primaryIsTotalCharge ? geom : QStringLiteral("A");
+            m_chargeEditingHint->setText(QStringLiteral("%1 = %2 × %3 (%4 %5) · Resize keeps %6")
+                .arg(native, symbol, denominator)
+                .arg(relation.measure, 0, 'g', 6)
+                .arg(geomUnit)
+                .arg(m_densityIsDriving ? symbol : native));
+            m_chargeEditingHint->setToolTip(
+                QStringLiteral("Edit either field. When dimensions change, the last edited quantity stays fixed. "
+                               "For infinite cylinders the first field is λ in C/m, not a total charge."));
+        }
+    }
+    ui->sourceEditorGroup->setTitle(QStringLiteral("Selected source"));
     QString assumption;
     switch (type)
     {
@@ -752,8 +998,12 @@ void MainWindow::updateStrengthUnitLabels()
         assumption = QStringLiteral("Q is the point charge located at X/Y/Z.");
         break;
     case SourceType::SolidSphere:
-        assumption = QStringLiteral("Q is distributed uniformly through the full sphere volume. Exact Gauss-law field and potential are used.");
+    {
+        assumption=QStringLiteral("Uniform volume density: Q = ρ·(4πR³/3). "
+                                  "Both Q and ρ can be edited. Outside: |E|=k|Q|/d²; "
+                                  "inside: |E|=k|Q|d/R³.");
         break;
+    }
     case SourceType::SphericalShell:
         assumption = QStringLiteral("Q is distributed on an infinitesimally thin spherical surface. The electric field is exactly zero inside.");
         break;
@@ -793,6 +1043,8 @@ void MainWindow::updateStrengthUnitLabels()
     }
     ui->strengthLabel->setToolTip(assumption);
     ui->sourceStrengthSpin->setToolTip(assumption);
+    if (m_densityLabel) m_densityLabel->setToolTip(assumption);
+    if (m_densitySpin) m_densitySpin->setToolTip(assumption);
 }
 
 void MainWindow::setMeasurementFromEditors()
@@ -835,6 +1087,8 @@ void MainWindow::updateMeasurementResults()
 double MainWindow::chargeUnitScale(const QComboBox *combo) const
 {
     const QString unit = combo->currentText();
+    if (unit == QLatin1String("p")) return 1.0e-12;
+    if (unit == QLatin1String("k")) return 1.0e3;
     if (unit.startsWith(QLatin1Char('n'))) return 1.0e-9;
     if (unit.startsWith(QLatin1Char('u')) || unit.startsWith(QChar(0x00B5))) return 1.0e-6;
     if (unit.startsWith(QLatin1Char('m'))) return 1.0e-3;

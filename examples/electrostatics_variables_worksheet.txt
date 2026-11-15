@@ -1,0 +1,5 @@
+# Electrostatic field and force; paste into Calculator / Notes > Variables & units
+q = 2 nC
+r = 10 cm
+E = ke*q/r^2
+force = q*E

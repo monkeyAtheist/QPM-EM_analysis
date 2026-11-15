@@ -12,8 +12,8 @@
         "${workspaceFolder}",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp",
-        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/include",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/src",
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/include",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/include/widgets",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/forms",
         "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/resources",
@@ -46,15 +46,15 @@
         "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtGui",
         "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtCore",
         "C:/Qt/Qt6.11.0/6.11.0/mingw_64/mkspecs/win32-g++",
-        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/release/generated"
+        "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/debug/generated"
       ],
       "browse": {
         "path": [
           "${workspaceFolder}",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp",
-          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/include",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/src",
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/include",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/include/widgets",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/forms",
           "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/resources",
@@ -87,7 +87,7 @@
           "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtGui",
           "C:/Qt/Qt6.11.0/6.11.0/mingw_64/include/QtCore",
           "C:/Qt/Qt6.11.0/6.11.0/mingw_64/mkspecs/win32-g++",
-          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/release/generated"
+          "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/build/debug/generated"
         ],
         "limitSymbolsToIncludedHeaders": true
       },

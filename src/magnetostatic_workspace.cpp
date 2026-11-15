@@ -391,7 +391,7 @@ void MagnetostaticWorkspace::buildUi()
         }
         updateResults();
     });
-    const auto measurementChanged = [this] { updateMeasurementFromEditors(); };
+    const auto measurementChanged = [this] { updateMeasurementFromEditors(); MagnetostaticWorkspace::applySourceEditor();};
     connect(m_measureX, qOverload<double>(&QDoubleSpinBox::valueChanged), this, measurementChanged);
     connect(m_measureY, qOverload<double>(&QDoubleSpinBox::valueChanged), this, measurementChanged);
     connect(m_measureZ, qOverload<double>(&QDoubleSpinBox::valueChanged), this, measurementChanged);

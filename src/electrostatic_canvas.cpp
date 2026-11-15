@@ -1,5 +1,6 @@
 #include "widgets/electrostatic_canvas.h"
 #include "field_visualization_utils.h"
+#include "electrostatic_field_line_integrator.h"
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -11,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 namespace
 {
@@ -452,78 +454,111 @@ void ElectrostaticCanvas::rebuildFieldLineCache()
     if (!m_showFieldLines || !m_model || m_model->sourceCount() == 0)
         return;
 
+    // Integrate the *projected* analytical E field, not the scalar heatmap.
+    // Every trajectory is seeded with the correct charge polarity. In the
+    // former code tracing both signs from every source and taking 9px steps
+    // could overshoot a point charge and draw loops around the singularity.
+    using namespace ElectrostaticFieldLines;
     const QRectF area = visualizationRect();
     const QPointF a = screenToWorld(area.topLeft());
     const QPointF b = screenToWorld(area.bottomRight());
-    const QRectF worldBounds(QPointF(std::min(a.x(), b.x()), std::min(a.y(), b.y())),
-                             QPointF(std::max(a.x(), b.x()), std::max(a.y(), b.y())));
-    const double step = std::clamp(9.0 / m_pixelsPerMeter, 0.002, 1.0);
-    const int totalSources = std::max(1, m_model->sourceCount());
-    const int seedsPerSource = std::clamp(18 / totalSources, 4, 8);
+    const Bounds bounds{std::min(a.x(), b.x()), std::min(a.y(), b.y()),
+                        std::max(a.x(), b.x()), std::max(a.y(), b.y())};
+    const double px = 1.0 / m_pixelsPerMeter;
+    const bool expensiveField = std::any_of(m_model->sources().begin(), m_model->sources().end(),
+        [](const ElectrostaticSource &source) { return source.type != ElectrostaticSource::Type::PointCharge; });
+    const Settings settings{6.0 * px, 0.65 * px, expensiveField ? 240 : 550};
+    std::vector<SourceStop> stops;
+    stops.reserve(std::size_t(m_model->sourceCount()));
 
-    QVector<QPointF> seeds;
-    for (int i = 0; i < m_model->sourceCount(); ++i)
+    for (const ElectrostaticSource &source : m_model->sources())
     {
-        const auto *source = m_model->source(i);
-        if (!source) continue;
-        const QPointF center = projectPoint(source->position);
-        double sourceRadius = 18.0 / m_pixelsPerMeter;
-        if (source->type == ElectrostaticSource::Type::SolidSphere ||
-            source->type == ElectrostaticSource::Type::SphericalShell ||
-            source->type == ElectrostaticSource::Type::ThickSphericalShell ||
-            source->type == ElectrostaticSource::Type::InfiniteCylinderZ ||
-            source->type == ElectrostaticSource::Type::InfiniteHollowCylinderZ ||
-            source->type == ElectrostaticSource::Type::CircularPlate ||
-            source->type == ElectrostaticSource::Type::AnnularPlate)
-            sourceRadius = std::max(sourceRadius, source->radius * 1.08);
-        else if (source->type == ElectrostaticSource::Type::FiniteLine)
-            sourceRadius = std::max(sourceRadius, source->length * 0.18);
-        else if (source->type == ElectrostaticSource::Type::RectangularPlate ||
-                 source->type == ElectrostaticSource::Type::RectangularVolume ||
-                 source->type == ElectrostaticSource::Type::TriangularPlate)
-            sourceRadius = std::max(sourceRadius, std::max(source->width, source->height) * 0.18);
-        for (int k = 0; k < seedsPerSource; ++k)
+        // Only seed singularities on the current slice. A charge located off
+        // the slice has no endpoint in the projected 2D vector field.
+        double sliceDistance = 0.0;
+        switch (m_viewPlane)
         {
-            const double angle = 2.0 * 3.14159265358979323846 * double(k) / double(seedsPerSource);
-            seeds.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * sourceRadius);
+        case FieldViewPlane::XY: sliceDistance = std::abs(source.position.z - m_measurementPoint.z); break;
+        case FieldViewPlane::XZ: sliceDistance = std::abs(source.position.y - m_measurementPoint.y); break;
+        case FieldViewPlane::YZ: sliceDistance = std::abs(source.position.x - m_measurementPoint.x); break;
         }
+        double physicalRadius = 0.0;
+        if (source.type == ElectrostaticSource::Type::SolidSphere ||
+            source.type == ElectrostaticSource::Type::SphericalShell ||
+            source.type == ElectrostaticSource::Type::ThickSphericalShell ||
+            source.type == ElectrostaticSource::Type::InfiniteCylinderZ ||
+            source.type == ElectrostaticSource::Type::InfiniteHollowCylinderZ)
+            physicalRadius = source.radius;
+        if (sliceDistance > std::max(physicalRadius, 2.0 * px)) continue;
+        const QPointF projected = projectPoint(source.position);
+        stops.push_back({{projected.x(), projected.y()}, std::max(8.0 * px, physicalRadius * 1.03)});
     }
 
-    const auto trace = [this, worldBounds, step](const QPointF &seed, double sign) {
-        QPainterPath path;
-        QPointF p = seed;
-        path.moveTo(worldToScreen(p));
-        for (int iteration = 0; iteration < 130; ++iteration)
-        {
-            if (!worldBounds.adjusted(-step, -step, step, step).contains(p)) break;
-            const auto field = m_model->fieldAt(samplePointForPlane(p));
-            if (field.singular) break;
-            QPointF v = projectVector(field.electricField);
-            double n = std::hypot(v.x(), v.y());
-            if (!std::isfinite(n) || n < 1e-30) break;
-            v /= n;
-            const QPointF mid = p + v * (0.5 * step * sign);
-            const auto midField = m_model->fieldAt(samplePointForPlane(mid));
-            if (midField.singular) break;
-            QPointF vm = projectVector(midField.electricField);
-            const double nm = std::hypot(vm.x(), vm.y());
-            if (!std::isfinite(nm) || nm < 1e-30) break;
-            vm /= nm;
-            const QPointF next = p + vm * (step * sign);
-            if (!worldBounds.adjusted(-step, -step, step, step).contains(next)) break;
-            path.lineTo(worldToScreen(next));
-            if (iteration > 24 && QLineF(next, seed).length() < step * 1.4) break;
-            p = next;
-        }
-        return path;
+    const auto sampler = [this](Point p) -> Point {
+        const auto result = m_model->fieldAt(samplePointForPlane(QPointF(p.x, p.y)));
+        if (result.singular) return {0.0, 0.0};
+        const QPointF projected = projectVector(result.electricField);
+        return {projected.x(), projected.y()};
     };
 
-    for (const QPointF &seed : seeds)
+    // If the slice contains no source center, still visualize the projected
+    // field using neutral interior seeds instead of making the lines vanish.
+    if (stops.empty())
     {
-        const QPainterPath forward = trace(seed, +1.0);
-        const QPainterPath backward = trace(seed, -1.0);
-        if (forward.elementCount() > 2) m_fieldLinePaths.push_back(forward);
-        if (backward.elementCount() > 2) m_fieldLinePaths.push_back(backward);
+        for (int row = 1; row <= 3; ++row)
+            for (int col = 1; col <= 4; ++col)
+            {
+                const Point seed{bounds.left + (bounds.right - bounds.left) * double(col) / 5.0,
+                                 bounds.bottom + (bounds.top - bounds.bottom) * double(row) / 4.0};
+                const std::vector<Point> tracePoints = trace(seed, +1.0, bounds, stops, sampler, settings);
+                if (tracePoints.size() < 3) continue;
+                QPainterPath path;
+                path.moveTo(worldToScreen(QPointF(tracePoints[0].x, tracePoints[0].y)));
+                for (std::size_t j = 1; j < tracePoints.size(); ++j)
+                    path.lineTo(worldToScreen(QPointF(tracePoints[j].x, tracePoints[j].y)));
+                m_fieldLinePaths.push_back(std::move(path));
+            }
+        return;
+    }
+
+    const int totalSources = std::max(1, m_model->sourceCount());
+    const int seedsPerSource = std::clamp((expensiveField ? 16 : 32) / totalSources, 1, 8);
+    for (const ElectrostaticSource &source : m_model->sources())
+    {
+        if (source.strength == 0.0 || !std::isfinite(source.strength)) continue;
+        double sliceDistance = 0.0;
+        switch (m_viewPlane)
+        {
+        case FieldViewPlane::XY: sliceDistance = std::abs(source.position.z - m_measurementPoint.z); break;
+        case FieldViewPlane::XZ: sliceDistance = std::abs(source.position.y - m_measurementPoint.y); break;
+        case FieldViewPlane::YZ: sliceDistance = std::abs(source.position.x - m_measurementPoint.x); break;
+        }
+        double physicalRadius = 0.0;
+        if (source.type == ElectrostaticSource::Type::SolidSphere ||
+            source.type == ElectrostaticSource::Type::SphericalShell ||
+            source.type == ElectrostaticSource::Type::ThickSphericalShell ||
+            source.type == ElectrostaticSource::Type::InfiniteCylinderZ ||
+            source.type == ElectrostaticSource::Type::InfiniteHollowCylinderZ)
+            physicalRadius = source.radius;
+        if (sliceDistance > std::max(physicalRadius, 2.0 * px)) continue;
+        const QPointF projected = projectPoint(source.position);
+        const Point center{projected.x(), projected.y()};
+        const double seedRadius = std::max(15.0 * px, physicalRadius * 1.16);
+        const double direction = source.strength > 0.0 ? +1.0 : -1.0;
+        for (int k = 0; k < seedsPerSource; ++k)
+        {
+            const double angle = 2.0 * 3.14159265358979323846 *
+                                 (double(k) + 0.5) / double(seedsPerSource);
+            const Point seed{center.x + seedRadius * std::cos(angle),
+                             center.y + seedRadius * std::sin(angle)};
+            const std::vector<Point> tracePoints = trace(seed, direction, bounds, stops, sampler, settings);
+            if (tracePoints.size() < 3) continue;
+            QPainterPath path;
+            path.moveTo(worldToScreen(QPointF(tracePoints[0].x, tracePoints[0].y)));
+            for (std::size_t j = 1; j < tracePoints.size(); ++j)
+                path.lineTo(worldToScreen(QPointF(tracePoints[j].x, tracePoints[j].y)));
+            m_fieldLinePaths.push_back(std::move(path));
+        }
     }
 }
 

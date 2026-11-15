@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 19,
+  "schemaVersion": 20,
   "name": "QTsignalApp",
   "kind": "widgets-application",
   "targetName": "QTsignalApp",
@@ -87,7 +87,9 @@
         "precompiledHeader": "",
         "unityBuild": false,
         "useResponseFiles": true,
-        "linkage": "dynamic"
+        "linkage": "dynamic",
+        "staticLibraryFormat": "auto",
+        "dllImportLibraryFormat": "auto"
       },
       {
         "id": "release",
@@ -120,14 +122,16 @@
         "precompiledHeader": "",
         "unityBuild": false,
         "useResponseFiles": true,
-        "linkage": "dynamic"
+        "linkage": "dynamic",
+        "staticLibraryFormat": "auto",
+        "dllImportLibraryFormat": "auto"
       }
     ],
     "runs": [
       {
         "id": "default-run",
         "name": "Desktop Run",
-        "buildProfileId": "release",
+        "buildProfileId": "debug",
         "arguments": "",
         "workingDirectory": "/c/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp",
         "environment": {},
@@ -300,7 +304,7 @@
       "deployProfileId": "desktop-deploy",
       "debugProfileId": "local-debug",
       "platformProfileId": "desktop-platform",
-      "buildMode": "release64"
+      "buildMode": "debug64"
     }
   },
   "testing": {
@@ -489,7 +493,7 @@
   "packaging": {
     "enabled": true,
     "productName": "QTsignalApp",
-    "productVersion": "6.3.0",
+    "productVersion": "6.14.0",
     "companyName": "",
     "description": "Interactive electrostatic, magnetostatic and RF/EM field explorer with antenna geometry design, link-budget calculations, configurable UI themes, 2D TMz/TEz FDTD with CPML/modal guide ports, Smith/network analysis, BEM capacitance, thin-wire MoM antennas, geometric coil coupling, probes and passive-component calculations, engineering wave/antenna/EM calculator",
     "copyright": "",
@@ -675,11 +679,10 @@
   },
   "files": {
     "sources": [
-      "include/ElectroMagnetisme.cpp",
       "src/dialog_electro_stat.cpp",
+      "src/app_diagnostics.cpp",
       "src/main.cpp",
       "src/mainwindow.cpp",
-      "src/matrice.cpp",
       "src/electrostatic_model.cpp",
       "src/electrostatic_canvas.cpp",
       "src/magnetostatic_model.cpp",
@@ -698,6 +701,8 @@
       "src/fdtd_analysis.cpp",
       "src/ui_style_manager.cpp",
       "src/vna_time_domain.cpp",
+      "src/antenna_project_document.cpp",
+      "src/notes_ink_canvas.cpp",
       "src/antenna_designer_widget.cpp",
       "src/antenna_validation_bench.cpp",
       "src/antenna_surface_geometry.cpp",
@@ -705,17 +710,17 @@
       "src/hybrid_wire_surface_mom.cpp",
       "src/microstrip_models.cpp",
       "src/em_calculator_model.cpp",
+      "src/em_units_calculator_model.cpp",
       "src/laplace_rail_model.cpp",
       "src/em_calculator_widget.cpp",
       "src/laplace_rail_widget.cpp"
     ],
     "headers": [
       "include/dialog_electro_stat.h",
-      "include/ElectroMagnetisme.hpp",
+      "include/app_diagnostics.h",
       "include/mainwindow.h",
-      "include/mathdt.h",
-      "src/matrice.hpp",
       "include/electrostatic_model.h",
+      "include/electrostatic_charge_density.h",
       "include/widgets/electrostatic_canvas.h",
       "include/field_view_plane.h",
       "include/magnetostatic_model.h",
@@ -735,6 +740,9 @@
       "include/fdtd_analysis.h",
       "include/ui_style_manager.h",
       "include/vna_time_domain.h",
+      "include/antenna_project_document.h",
+      "include/electrostatic_field_line_integrator.h",
+      "include/widgets/notes_ink_canvas.h",
       "include/widgets/antenna_designer_widget.h",
       "include/antenna_validation_bench.h",
       "include/widgets/engineering_sketch_widget.h",
@@ -744,6 +752,8 @@
       "include/hybrid_wire_surface_mom.h",
       "include/microstrip_models.h",
       "include/em_calculator_model.h",
+      "include/em_units_calculator_model.h",
+      "include/em_display_format.h",
       "include/laplace_rail_model.h",
       "include/widgets/em_calculator_widget.h",
       "include/widgets/laplace_rail_widget.h"
@@ -776,7 +786,12 @@
       "README_VNA_MARKERS.md",
       "README_VNA_TIME_DOMAIN.md",
       "README_ENGINEERING_CALCULATOR.md",
-      "RELEASE_6_1_0.md"
+      "RELEASE_6_1_0.md",
+      "include/ElectroMagnetisme.cpp",
+      "include/ElectroMagnetisme.hpp",
+      "include/mathdt.h",
+      "src/matrice.cpp",
+      "src/matrice.hpp"
     ]
   },
   "includeDirectories": [

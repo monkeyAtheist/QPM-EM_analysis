@@ -1,6 +1,7 @@
 #pragma once
 
 #include "electrostatic_model.h"
+#include "electrostatic_charge_density.h"
 
 #include <QMainWindow>
 #include <memory>
@@ -10,6 +11,8 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class QComboBox;
+class QDoubleSpinBox;
+class QLabel;
 class QWidget;
 class QTabWidget;
 class MagnetostaticWorkspace;
@@ -35,6 +38,12 @@ private:
     void updateMeasurementResults();
     void setMeasurementFromEditors();
     void updateStrengthUnitLabels();
+    void updateChargeFromPrimary();
+    void updateChargeFromDensity();
+    void updateChargeAfterGeometryChange();
+    void refreshChargeReadouts();
+    ElectrostaticChargeDensity::Relation currentChargeRelation() const;
+
 
     double chargeUnitScale(const QComboBox *combo) const;
     static QString formatEngineering(double value, const QString &unit);
@@ -48,6 +57,14 @@ private:
     MagnetostaticWorkspace *m_magnetostaticWorkspace = nullptr;
     int m_selectedSource = -1;
     bool m_loadingEditor = false;
+    QDoubleSpinBox *m_densitySpin = nullptr;
+    QComboBox *m_densityUnitCombo = nullptr;
+    QLabel *m_densityLabel = nullptr;
+    QLabel *m_chargeEditingHint = nullptr;
+    double m_chargePrimarySI = 0.0;
+    double m_chargeDensitySI = 0.0;
+    bool m_densityIsDriving = false;
+
     QWidget *m_referenceWorkspace = nullptr;
     QWidget *m_calculatorWorkspace = nullptr;
     QWidget *m_antennaDesignerWorkspace = nullptr;

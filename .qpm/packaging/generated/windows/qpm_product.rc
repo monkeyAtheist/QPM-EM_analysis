@@ -1,6 +1,6 @@
 #include <windows.h>
-#define QPM_FILE_VERSION 6,3,0,0
-#define QPM_FILE_VERSION_STR "6.3.0\0"
+#define QPM_FILE_VERSION 6,14,0,0
+#define QPM_FILE_VERSION_STR "6.14.0\0"
 IDI_QPM_APP ICON "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/icons/QTsignalApp_Yagi_Icon.ico"
 1 RT_MANIFEST "c:/Users/jerry/OneDrive/Bureau/code/Programmes C++ windows/QT/SignalAnalysis/QTsignalApp/.qpm/packaging/generated/windows/application.manifest"
 VS_VERSION_INFO VERSIONINFO

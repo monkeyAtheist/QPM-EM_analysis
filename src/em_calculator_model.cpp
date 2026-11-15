@@ -101,7 +101,8 @@ bool inversePatchFrequency(double targetLength, double er, double h, double &fre
 class Parser
 {
 public:
-    explicit Parser(const std::string &text) : m_text(text) {}
+    explicit Parser(const std::string &text, double previousResult = std::numeric_limits<double>::quiet_NaN())
+        : m_text(text), m_previousResult(previousResult) {}
 
     ExpressionResult run()
     {
@@ -232,12 +233,29 @@ private:
 
     double constant(const std::string &id)
     {
-        static const std::unordered_map<std::string, double> constants = {
-            {"pi", pi}, {"e", euler}, {"eps0", epsilon0}, {"epsilon0", epsilon0},
-            {"mu0", mu0}, {"c", c0}, {"c0", c0}, {"ke", coulombK}, {"k", coulombK},
-            {"eta0", eta0}, {"z0", eta0}, {"h", planckH}, {"hbar", hbar},
-            {"qe", elementaryCharge}, {"echarge", elementaryCharge}, {"me", electronMass}
-        };
+        if (id == "ans")
+        {
+            if (!std::isfinite(m_previousResult)) fail("ans is not defined yet. Evaluate an expression first.");
+            return m_previousResult;
+        }
+        static const std::unordered_map<std::string, double> constants = [] {
+            std::unordered_map<std::string, double> values;
+            for (const ConstantInfo &info : physicalConstants())
+            {
+                values.emplace(info.symbol, info.value);
+                std::size_t begin = 0;
+                while (begin < info.aliases.size())
+                {
+                    const std::size_t comma = info.aliases.find(',', begin);
+                    const std::string alias = info.aliases.substr(begin,
+                        comma == std::string::npos ? std::string::npos : comma - begin);
+                    if (!alias.empty()) values.emplace(alias, info.value);
+                    if (comma == std::string::npos) break;
+                    begin = comma + 1;
+                }
+            }
+            return values;
+        }();
         const auto it = constants.find(id);
         if (it == constants.end()) fail("Unknown constant: " + id);
         return it->second;
@@ -307,6 +325,7 @@ private:
     const std::string &m_text;
     std::size_t m_pos = 0;
     std::size_t m_errorPos = 0;
+    double m_previousResult = std::numeric_limits<double>::quiet_NaN();
 };
 
 } // namespace
@@ -571,18 +590,50 @@ bool antennaFromPrimaryDimension(AntennaKind kind, const AntennaInputs &in, Ante
     return true;
 }
 
+const std::vector<ConstantInfo> &physicalConstants()
+{
+    // Source: NIST CODATA 2022 recommended values (published 2024/2025).
+    // Avoid treating engineering reference material properties as fundamental constants.
+    static const std::vector<ConstantInfo> items = {
+        {"pi", pi, "", "Pi", "Mathematics", "", "Circle constant pi."},
+        {"e", euler, "", "Euler number", "Mathematics", "euler", "Base of the natural exponential exp(x)."},
+        {"eps0", epsilon0, "F/m", "Vacuum permittivity (epsilon zero)", "Electromagnetism", "epsilon0,epsilon_0,eps_0", "CODATA 2022; measured. Permittivite du vide / permittivité du vide (vacuum electric permittivity), F/m."},
+        {"mu0", mu0, "H/m", "Vacuum permeability (mu zero)", "Electromagnetism", "mu_0", "CODATA 2022; measured. Permeabilite du vide / perméabilité du vide; not exactly 4*pi*1e-7 in revised SI."},
+        {"c0", c0, "m/s", "Speed of light in vacuum", "Electromagnetism", "c", "Exact SI value. Used in wavelength and propagation calculations."},
+        {"ke", coulombK, "N*m^2/C^2", "Coulomb constant", "Electromagnetism", "k,k_e", "Derived consistently as 1/(4*pi*eps0); k is Coulomb, kb is Boltzmann."},
+        {"eta0", eta0, "ohm", "Vacuum wave impedance", "Electromagnetism", "z0", "Derived as mu0*c0 = sqrt(mu0/eps0)."},
+        {"h", planckH, "J*s", "Planck constant", "Quantum", "", "Exact SI value."},
+        {"hbar", hbar, "J*s", "Reduced Planck constant", "Quantum", "", "h/(2*pi)."},
+        {"qe", elementaryCharge, "C", "Elementary charge magnitude", "Quantum", "echarge", "Exact positive magnitude; electron charge is -qe."},
+        {"ev", evJoule, "J", "Electronvolt (1 eV)", "Quantum", "electronvolt", "Energy corresponding to one electronvolt, in joules."},
+        {"me", electronMass, "kg", "Electron mass", "Quantum", "", "CODATA 2022 recommended value."},
+        {"mp", protonMass, "kg", "Proton mass", "Quantum", "", "CODATA 2022 recommended value."},
+        {"kb", boltzmannKB, "J/K", "Boltzmann constant", "Thermodynamics", "k_b,boltzmann", "Exact SI value. kb is not the Coulomb constant k."},
+        {"na", avogadroNA, "1/mol", "Avogadro constant", "Thermodynamics", "avogadro", "Exact SI value."},
+        {"rgas", molarGasR, "J/(mol*K)", "Molar gas constant", "Thermodynamics", "r_gas", "Exact product na*kb."},
+        {"faraday", faradayF, "C/mol", "Faraday constant", "Thermodynamics", "fconst", "Exact product na*qe."},
+        {"gconst", gravitationalG, "m^3/(kg*s^2)", "Gravitational constant", "Mechanics", "g_newton", "CODATA recommended value; large measurement uncertainty compared with SI-defining constants."},
+        {"sigmasb", stefanBoltzmann, "W/(m^2*K^4)", "Stefan-Boltzmann constant", "Thermodynamics", "sigma_sb", "Derived from exact SI constants."},
+        {"sigma_cu", copperConductivity, "S/m", "Copper conductivity (typical)", "Engineering", "", "Approximate engineering reference; depends on temperature and alloy, not a fundamental constant."}
+    };
+    return items;
+}
+
 ExpressionResult evaluateExpression(const std::string &expression)
 {
     return Parser(expression).run();
 }
 
+ExpressionResult evaluateExpression(const std::string &expression, double previousResult)
+{
+    return Parser(expression, previousResult).run();
+}
+
 std::vector<std::pair<std::string, double>> constantTable()
 {
-    return {
-        {"pi", pi}, {"e", euler}, {"eps0", epsilon0}, {"mu0", mu0}, {"c0", c0},
-        {"ke", coulombK}, {"eta0", eta0}, {"h", planckH}, {"hbar", hbar},
-        {"qe", elementaryCharge}, {"me", electronMass}
-    };
+    std::vector<std::pair<std::string, double>> result;
+    for (const auto &item : physicalConstants()) result.emplace_back(item.symbol, item.value);
+    return result;
 }
 
 } // namespace EmCalculator

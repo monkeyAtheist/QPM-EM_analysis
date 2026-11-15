@@ -7,15 +7,38 @@ namespace EmCalculator
 {
 constexpr double pi = 3.141592653589793238462643383279502884;
 constexpr double c0 = 299792458.0;
-constexpr double epsilon0 = 8.8541878128e-12;
-constexpr double mu0 = 1.25663706212e-6;
-constexpr double coulombK = 8.9875517923e9;
-constexpr double eta0 = 376.730313668;
+constexpr double epsilon0 = 8.8541878188e-12; // CODATA 2022; measured
+constexpr double mu0 = 1.25663706127e-6; // CODATA 2022; measured
+constexpr double coulombK = 1.0 / (4.0 * pi * epsilon0);
+constexpr double eta0 = mu0 * c0;
 constexpr double euler = 2.71828182845904523536;
 constexpr double planckH = 6.62607015e-34;
-constexpr double hbar = 1.054571817e-34;
+constexpr double hbar = planckH / (2.0 * pi);
 constexpr double elementaryCharge = 1.602176634e-19;
-constexpr double electronMass = 9.1093837139e-31;
+constexpr double electronMass = 9.1093837139e-31; // CODATA 2022
+constexpr double protonMass = 1.67262192595e-27; // CODATA 2022
+constexpr double boltzmannKB = 1.380649e-23; // Exact SI
+constexpr double avogadroNA = 6.02214076e23; // Exact SI
+constexpr double molarGasR = boltzmannKB * avogadroNA;
+constexpr double faradayF = elementaryCharge * avogadroNA;
+constexpr double gravitationalG = 6.67430e-11;
+constexpr double evJoule = elementaryCharge; // 1 eV in joules
+constexpr double stefanBoltzmann = 5.670374419e-8;
+constexpr double copperConductivity = 5.8e7; // Typical engineering value, not universal
+
+struct ConstantInfo
+{
+    std::string symbol;       // ASCII identifier accepted by the expression parser
+    double value = 0.0;       // coherent SI units
+    std::string unit;
+    std::string name;
+    std::string category;
+    std::string aliases;      // optional comma-separated ASCII identifiers
+    std::string description;  // uncertainty/assumptions and applications
+};
+
+// One registry used by the expression parser, catalogue, and tests.
+const std::vector<ConstantInfo> &physicalConstants();
 
 struct WaveResult
 {
@@ -95,6 +118,8 @@ struct ExpressionResult
 };
 
 ExpressionResult evaluateExpression(const std::string &expression);
+// ans is only enabled when previousResult is finite; otherwise ans gives a clear error.
+ExpressionResult evaluateExpression(const std::string &expression, double previousResult);
 std::vector<std::pair<std::string, double>> constantTable();
 
 } // namespace EmCalculator

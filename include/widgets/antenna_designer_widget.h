@@ -33,6 +33,7 @@ public:
     bool createFromCalculator(EmCalculator::AntennaKind kind, const EmCalculator::AntennaInputs &inputs, QString *error = nullptr);
 
 signals:
+    void antennaProjectFileChanged(const QString &path);
     void antennaImpedanceAvailable(double frequencyHz, double resistanceOhm, double reactanceOhm,
                                    double referenceOhm, const QString &feedName);
     void antennaSweepAvailable(const QVector<double> &frequencyHz, const QVector<double> &resistanceOhm,
